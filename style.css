@@ -1,0 +1,696 @@
+/* =========================================================
+   ERENNKEYFSSS — Link Hub
+   Tema: Gece moru + altın vurgu (banner'daki mor/altın uyumu)
+   ========================================================= */
+
+:root {
+  --bg:            #0b0614;
+  --bg-2:          #150a26;
+  --violet:        #a855f7;
+  --violet-deep:   #7c3aed;
+  --violet-dark:   #4c1d95;
+  --violet-soft:   #c4b5fd;
+  --gold:          #f5b942;
+  --gold-soft:     #ffd97a;
+  --text:          #efe9ff;
+  --muted:         #a698c9;
+  --line:          rgba(168, 85, 247, .28);
+  --glass:         rgba(124, 58, 237, .10);
+  --glass-hi:      rgba(168, 85, 247, .22);
+  --radius:        18px;
+  --shadow:        0 18px 40px -18px rgba(0, 0, 0, .85);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* ---------------------------------------------------------
+   ARKA PLAN — mor bulutsular + dev baykuş filigranı
+   --------------------------------------------------------- */
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg-2);
+  filter: saturate(1.1) brightness(.95);
+}
+/* Fotoğraf ayrı katmanda: sadece arka plan bulanık olsun,
+   yıldızlar/aurora/toz keskin kalsın. inset negatif = blur kenar boşluğu */
+.bg::before {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  background: url("assets/wallpaper-owl.jpg") center 30% / cover no-repeat;
+  filter: blur(16px) saturate(1.05);
+  transform: scale(1.03);          /* blur kenarlarında şeffaflık olmasın */
+}
+.bg::after {                     /* fotoğrafın ÜSTÜNDE: karartma + vinyet */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(76, 29, 149, .40), rgba(11, 6, 20, .55) 45%, rgba(6, 3, 14, .85)),
+    linear-gradient(rgba(5, 2, 12, .25), rgba(5, 2, 12, .25)),
+    radial-gradient(75% 60% at 50% 35%, transparent 50%, rgba(6, 3, 12, .8) 100%);
+}
+
+.orb {
+  position: absolute;
+  z-index: 1;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: .5;
+  animation: float 16s ease-in-out infinite;
+}
+.orb--1 { width: 320px; height: 320px; top: -80px;  left: -70px;  background: #7c3aed; }
+.orb--2 { width: 260px; height: 260px; bottom: 5%;  right: -80px; background: #a855f7; animation-delay: -5s; }
+.orb--3 { width: 200px; height: 200px; top: 45%;    left: 60%;    background: #f5b942; opacity: .16; animation-delay: -10s; }
+
+@keyframes float {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(0, -26px, 0) scale(1.06); }
+}
+
+/* --- Arka plan efektleri --- */
+
+/* Twinkling yıldız alanı */
+.bg__stars {
+  position: absolute;
+  inset: 0;
+  z-index: 2;                       /* vinyetin üstünde kalsın */
+  background-image:
+    radial-gradient(1.8px 1.8px at 12% 18%, rgba(255,255,255,1), transparent 100%),
+    radial-gradient(1.6px 1.6px at 28% 62%, rgba(230,210,255,1), transparent 100%),
+    radial-gradient(2px 2px at 44% 30%, rgba(255,255,255,.95), transparent 100%),
+    radial-gradient(1.5px 1.5px at 61% 78%, rgba(255,217,122,1), transparent 100%),
+    radial-gradient(1.9px 1.9px at 73% 22%, rgba(255,255,255,1), transparent 100%),
+    radial-gradient(1.6px 1.6px at 86% 55%, rgba(206,190,255,1), transparent 100%),
+    radial-gradient(1.7px 1.7px at 8% 82%, rgba(255,255,255,.95), transparent 100%),
+    radial-gradient(1.5px 1.5px at 52% 12%, rgba(255,255,255,1), transparent 100%),
+    radial-gradient(1.9px 1.9px at 92% 88%, rgba(230,210,255,1), transparent 100%),
+    radial-gradient(1.6px 1.6px at 35% 45%, rgba(255,217,122,.95), transparent 100%),
+    radial-gradient(1.5px 1.5px at 68% 40%, rgba(255,255,255,.9), transparent 100%),
+    radial-gradient(1.7px 1.7px at 20% 50%, rgba(206,190,255,.95), transparent 100%);
+  animation: twinkle 4.5s ease-in-out infinite alternate;
+}
+@keyframes twinkle {
+  0%   { opacity: .55; }
+  100% { opacity: 1; }
+}
+
+/* Gerçekçi aurora: gürültüyle bükülen dikey ışık perdeleri (SVG feTurbulence) */
+.bg__aurora {
+  position: absolute;
+  top: -22%;
+  left: -15%;
+  z-index: 1;                       /* fotoğrafın üstünde, vinyetle aynı kat */
+  width: 130%;
+  height: 85%;
+  background:
+    /* dikey ışık rayları — filtre bunları dalgalı perdeye büker */
+    radial-gradient(13% 62% at 27% 22%, rgba(124, 58, 237, .55), transparent 72%),
+    radial-gradient(9% 54% at 44% 14%, rgba(168, 85, 247, .45), transparent 72%),
+    radial-gradient(8% 48% at 61% 26%, rgba(45, 212, 191, .26), transparent 72%),
+    radial-gradient(12% 58% at 77% 18%, rgba(232, 121, 249, .42), transparent 72%),
+    radial-gradient(9% 44% at 14% 32%, rgba(196, 181, 253, .34), transparent 72%),
+    radial-gradient(7% 38% at 90% 28%, rgba(245, 185, 66, .16), transparent 72%);
+  filter: url(#aurora-ripple) blur(24px);
+  opacity: .8;
+  transform-origin: 50% 0;
+  animation: aurora-drift 34s ease-in-out infinite alternate;
+}
+/* alt katman: yumuşak, ters yönde süzülen ikinci ışık */
+.bg__aurora::after {
+  content: "";
+  position: absolute;
+  inset: 34% -8% -18% -8%;
+  background:
+    radial-gradient(18% 55% at 35% 60%, rgba(124, 58, 237, .34), transparent 72%),
+    radial-gradient(14% 45% at 68% 70%, rgba(168, 85, 247, .26), transparent 72%),
+    radial-gradient(10% 40% at 52% 80%, rgba(45, 212, 191, .14), transparent 72%);
+  filter: blur(30px);
+  animation: aurora-drift 46s ease-in-out infinite alternate-reverse;
+}
+/* yavaş süzülme + nefes alan parlaklık — dönen daire hissi yok */
+@keyframes aurora-drift {
+  0%   { transform: translate3d(-2.5%, 0, 0) rotate(-1.5deg) scaleY(1); opacity: .5; }
+  50%  { opacity: .9; }
+  100% { transform: translate3d(3%, 2%, 0) rotate(1.5deg) scaleY(1.05); opacity: .7; }
+}
+
+/* Uçuşan ışık tozu */
+.bg__dust {
+  position: absolute;
+  inset: 0;
+  z-index: 2;                       /* vinyetin üstünde kalsın */
+  background-image:
+    radial-gradient(2.6px 2.6px at 20% 30%, rgba(255,255,255,.85), transparent 100%),
+    radial-gradient(2px 2px at 70% 65%, rgba(206,190,255,.9), transparent 100%),
+    radial-gradient(3.2px 3.2px at 45% 85%, rgba(255,217,122,.7), transparent 100%),
+    radial-gradient(2.4px 2.4px at 85% 25%, rgba(255,255,255,.75), transparent 100%),
+    radial-gradient(2.2px 2.2px at 12% 70%, rgba(230,210,255,.8), transparent 100%),
+    radial-gradient(2.8px 2.8px at 58% 48%, rgba(255,255,255,.7), transparent 100%);
+  background-size: 100% 100%;
+  animation: dust-drift 14s ease-in-out infinite alternate;
+}
+@keyframes dust-drift {
+  0%   { transform: translate3d(0, 0, 0);      opacity: .65; }
+  50%  { transform: translate3d(-14px, -22px, 0); opacity: 1; }
+  100% { transform: translate3d(12px, -10px, 0);  opacity: .75; }
+}
+
+/* ---------------------------------------------------------
+   SAYFA YERLEŞİMİ
+   --------------------------------------------------------- */
+.page {
+  width: min(500px, 100% - 32px);
+  margin: 0 auto;
+  padding: 56px 0 40px;
+}
+
+/* ---------------------------------------------------------
+   HERO — avatar, isim, bio, canlı rozeti
+   --------------------------------------------------------- */
+.hero { text-align: center; }
+
+.avatar {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  margin: 0 auto 20px;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  border: 3px solid rgba(168, 85, 247, .55);
+  box-shadow: 0 0 0 6px rgba(124, 58, 237, .18), 0 0 45px rgba(168, 85, 247, .55);
+}
+.avatar__ring {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  border: 2px dashed rgba(196, 181, 253, .35);
+  animation: spin 26s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.avatar__status {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #6b7280;
+  border: 4px solid var(--bg-2);
+  transition: background .3s, box-shadow .3s;
+}
+.avatar__status[data-state="live"] {
+  background: #53fc18;                       /* Kick yeşili */
+  box-shadow: 0 0 12px rgba(83, 252, 24, .9);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+.avatar__status[data-state="online"] { background: var(--gold); }
+
+.hero__name {
+  margin: 0 0 10px;
+  font-size: clamp(2rem, 8vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  background: linear-gradient(180deg, #fff 20%, var(--violet-soft));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 40px rgba(168, 85, 247, .35);
+}
+
+.hero__bio {
+  margin: 0 auto 18px;
+  max-width: 38ch;
+  font-size: .95rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* Canlı rozeti */
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 15px;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--glass);
+  border: 1px solid var(--line);
+  transition: all .35s ease;
+}
+.live__dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.live[data-state="live"] {
+  color: #0b0614;
+  background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+  border-color: transparent;
+  box-shadow: 0 0 26px rgba(245, 185, 66, .55);
+}
+.live[data-state="live"] .live__dot {
+  background: #e0245e;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%      { transform: scale(1.5); opacity: .55; }
+}
+
+/* ---------------------------------------------------------
+   YAYIN — canlı player / son yayın kartı
+   --------------------------------------------------------- */
+.stream { margin-top: 30px; }
+
+.stream__frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #100720;
+  border: 1px solid rgba(196, 181, 253, .35);
+  box-shadow: 0 26px 60px -26px #000, 0 0 44px rgba(168, 85, 247, .3);
+}
+.stream__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #000;
+}
+
+.stream__loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  font-size: .82rem;
+  color: var(--muted);
+  letter-spacing: .04em;
+}
+.stream__spinner {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 3px solid rgba(196, 181, 253, .25);
+  border-top-color: var(--violet);
+  animation: spin .9s linear infinite;
+}
+
+/* CANLI etiketi */
+.stream__tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: #fff;
+  background: #e0245e;
+  box-shadow: 0 8px 20px -6px rgba(224, 36, 94, .9);
+  pointer-events: none;
+}
+.stream__tag i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+/* SON YAYIN kartı */
+.vod {
+  position: absolute;
+  inset: 0;
+  display: block;
+  text-decoration: none;
+  color: var(--text);
+}
+.vod__thumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .5s ease;
+}
+.vod:hover .vod__thumb { transform: scale(1.05); }
+.vod::after {                       /* yazıların okunması için degrade */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10, 5, 20, .25) 0%, rgba(10, 5, 20, .55) 45%, rgba(10, 5, 20, .94) 100%);
+}
+.vod__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: 58px;
+  height: 58px;
+  margin: -45px 0 0 -29px;         /* yukarı kaydır (metin altta) */
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 1.15rem;
+  padding-left: 4px;
+  color: #160b28;
+  background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+  box-shadow: 0 0 0 8px rgba(245, 185, 66, .18), 0 14px 30px -10px rgba(0, 0, 0, .9);
+  transition: transform .25s;
+}
+.vod:hover .vod__play { transform: scale(1.08); }
+
+.vod__body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 16px 18px;
+  display: grid;
+  gap: 5px;
+}
+.vod__label {
+  justify-self: start;
+  font-size: .64rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  color: #0b0614;
+  background: var(--gold);
+  padding: 3px 9px;
+  border-radius: 6px;
+}
+.vod__title {
+  font-size: .95rem;
+  font-weight: 600;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .9);
+}
+.vod__meta {
+  font-size: .74rem;
+  color: var(--violet-soft);
+  opacity: .9;
+}
+
+/* API düşerse: sade kanal kartı */
+.stream__fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  text-align: center;
+  padding: 20px;
+  background:
+    radial-gradient(60% 80% at 50% 0%, rgba(124, 58, 237, .45), transparent 70%),
+    url("assets/banner.webp") center / cover no-repeat,
+    #100720;
+}
+.stream__fallback span { font-size: .9rem; font-weight: 600; text-shadow: 0 2px 10px #000; }
+.stream__fallback em {
+  font-style: normal;
+  font-size: .76rem;
+  color: var(--violet-soft);
+  text-shadow: 0 2px 10px #000;
+}
+.stream__fallback a {
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: #160b28;
+  text-decoration: none;
+  background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+  padding: 9px 18px;
+  border-radius: 999px;
+  box-shadow: 0 12px 26px -12px rgba(245, 185, 66, .9);
+  transition: transform .2s;
+}
+.stream__fallback a:hover { transform: translateY(-2px); }
+
+.stream__caption {
+  margin: 12px 4px 0;
+  font-size: .82rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.stream__caption b { color: var(--text); font-weight: 600; }
+
+/* ---------------------------------------------------------
+   KARTLAR
+   --------------------------------------------------------- */
+main { display: grid; gap: 14px; margin-top: 34px; }
+
+.card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 18px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--text);
+  background: var(--glass);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  font-family: inherit;
+  overflow: hidden;
+  transition: transform .25s cubic-bezier(.2, .8, .3, 1),
+              border-color .25s, background .25s, box-shadow .25s;
+}
+.card::before {                    /* üstten ince ışık */
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .35), transparent);
+  opacity: .6;
+}
+.card:hover,
+.card:focus-visible {
+  transform: translateY(-3px);
+  background: var(--glass-hi);
+  border-color: rgba(196, 181, 253, .6);
+  box-shadow: 0 22px 44px -18px rgba(0, 0, 0, .9), 0 0 30px rgba(168, 85, 247, .35);
+  outline: none;
+}
+.card:active { transform: translateY(-1px) scale(.99); }
+
+.card__icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: rgba(11, 6, 20, .55);
+  border: 1px solid rgba(255, 255, 255, .08);
+}
+.card__icon svg { width: 22px; height: 22px; fill: currentColor; }
+
+.card__icon--kick { color: #53fc18; box-shadow: inset 0 0 18px rgba(83, 252, 24, .18); }
+.card__icon--ig   { color: #e1306c; box-shadow: inset 0 0 18px rgba(225, 48, 108, .2); }
+.card__icon--yt   { color: #ff4b4b; box-shadow: inset 0 0 18px rgba(255, 75, 75, .2); }
+.card__icon--tt   { color: #6ff7ef; box-shadow: inset 0 0 18px rgba(111, 247, 239, .18); }
+.card__icon--x    { color: #ffffff; }
+.card__icon--dc   { color: #8ea0ff; box-shadow: inset 0 0 18px rgba(142, 160, 255, .2); }
+.card__icon--mail { color: var(--gold); box-shadow: inset 0 0 18px rgba(245, 185, 66, .18); }
+
+.card__body { display: grid; gap: 3px; min-width: 0; }
+.card__title { font-weight: 600; font-size: 1rem; }
+.card__sub {
+  font-size: .82rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card__go {
+  margin-left: auto;
+  color: var(--violet-soft);
+  font-size: 1.05rem;
+  opacity: .55;
+  transition: transform .25s, opacity .25s;
+}
+.card:hover .card__go { transform: translate(3px, -3px); opacity: 1; }
+
+/* Kick CTA — banner'daki altın vurgu */
+.card--kick {
+  background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+  border-color: transparent;
+  color: #160b28;
+  padding: 17px 20px;
+  box-shadow: 0 20px 40px -18px rgba(245, 185, 66, .7);
+}
+.card--kick:hover {
+  background: linear-gradient(135deg, #ffe6a6, var(--gold-soft));
+  border-color: transparent;
+  box-shadow: 0 26px 50px -18px rgba(245, 185, 66, .85), 0 0 34px rgba(245, 185, 66, .45);
+}
+.card--kick .card__title { font-size: 1.12rem; font-weight: 700; }
+.card--kick .card__sub   { color: rgba(22, 11, 40, .7); font-weight: 500; }
+.card--kick .card__icon  { background: #160b28; border-color: transparent; color: #53fc18; }
+.card--kick .card__go    { color: #160b28; opacity: .8; }
+
+/* Sosyal grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.grid .card { padding: 14px 15px; gap: 12px; }
+.grid .card__sub { font-size: .76rem; }
+
+/* Discord satırı tam genişlik: ızgarayı bozmasın */
+.card--discord { grid-column: 1 / -1; }
+
+/* Fare kartın üzerinde gezerken ışık izi */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%),
+              rgba(255, 255, 255, .13), transparent 62%);
+  opacity: 0;
+  transition: opacity .3s;
+  pointer-events: none;
+}
+.card:hover::after { opacity: 1; }
+.card--kick::after {
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%),
+              rgba(255, 255, 255, .45), transparent 62%);
+}
+
+.card--mail { width: 100%; text-align: left; }
+.card--mail .card__go--copy {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(245, 185, 66, .16);
+  border: 1px solid rgba(245, 185, 66, .45);
+  color: var(--gold-soft);
+  opacity: 1;
+}
+.card--mail.copied .card__go--copy {
+  background: #53fc18;
+  border-color: #53fc18;
+  color: #0b0614;
+}
+
+/* ---------------------------------------------------------
+   FOOTER
+   --------------------------------------------------------- */
+.footer {
+  margin-top: 46px;
+  text-align: center;
+  color: var(--muted);
+  font-size: .82rem;
+}
+.footer__credit {
+  margin: 0;
+  letter-spacing: .04em;
+}
+.footer__credit a {
+  font-weight: 700;
+  text-decoration: none;
+  background: linear-gradient(90deg, var(--violet-soft), var(--gold-soft));
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: filter .3s;
+  animation: shimmer 3s linear infinite;
+}
+.footer__credit a:hover {
+  filter: drop-shadow(0 0 12px rgba(196, 181, 253, .8));
+}
+@keyframes shimmer {
+  0%   { background-position: 0% 0; }
+  50%  { background-position: 100% 0; }
+  100% { background-position: 0% 0; }
+}
+
+/* ---------------------------------------------------------
+   TOAST BİLDİRİMİ
+   --------------------------------------------------------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 30px;
+  transform: translate(-50%, 24px);
+  padding: 11px 20px;
+  border-radius: 999px;
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--text);
+  background: rgba(30, 11, 58, .95);
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 40px -16px #000, 0 0 26px rgba(168, 85, 247, .4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s, transform .3s;
+  z-index: 50;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------------------------------------------------------
+   HAREKET AZALTMA TERCIHI
+   --------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition-duration: .01ms !important; }
+}
+
+/* ---------------------------------------------------------
+   MOBIL
+   --------------------------------------------------------- */
+@media (max-width: 440px) {
+  .grid { grid-template-columns: 1fr; }
+  .card--discord { grid-column: auto; }
+  .page { padding-top: 40px; }
+}
