@@ -189,6 +189,9 @@ svg { width: 1em; height: 1em; flex-shrink: 0; }
 }
 .pkg__ranks { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding-top: 6px; }
 .emblem { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--rc); min-width: 82px; }
+.emblem img { width: 64px; height: 64px; object-fit: contain; filter: drop-shadow(0 0 12px color-mix(in srgb, var(--rc) 50%, transparent)); transition: transform .25s; }
+.pkg:hover .emblem img { transform: scale(1.08); }
+.emblem__fb { display: grid; place-items: center; width: 64px; height: 64px; }
 .emblem svg { width: 54px; height: 54px; filter: drop-shadow(0 0 10px color-mix(in srgb, var(--rc) 55%, transparent)); }
 .emblem small { font: 600 13px var(--display); letter-spacing: .06em; text-transform: uppercase; }
 .pkg__arrow { color: var(--muted); font-size: 22px; }
