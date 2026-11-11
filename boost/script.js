@@ -9,16 +9,19 @@ const CONFIG = {
   currency: "₺",
 };
 
-/* Rank renkleri (değiştirmene gerek yok) */
+/* Rank bilgileri: renk + resmi Valorant rank simgesi (tier numarası)
+   Simgeler valorant-api.com'dan yüklenir; yüklenemezse sade simge görünür. */
+const RANK_ICON = (tier) =>
+  `https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/${tier}/largeicon.png`;
 const RANKS = {
-  demir:  { name: "Demir",       color: "#8d8f99" },
-  bronz:  { name: "Bronz",       color: "#c0814f" },
-  gumus:  { name: "Gümüş",       color: "#c9d3dc" },
-  altin:  { name: "Altın",       color: "#f2c14e" },
-  platin: { name: "Platin",      color: "#3fc6c9" },
-  elmas:  { name: "Elmas",       color: "#c77dff" },
-  yucel:  { name: "Yücelik",     color: "#3ee08f" },
-  immo:   { name: "Ölümsüzlük",  color: "#ff4d6d" },
+  demir:  { name: "Demir",       color: "#8d8f99", tier: 3 },
+  bronz:  { name: "Bronz",       color: "#c0814f", tier: 6 },
+  gumus:  { name: "Gümüş",       color: "#c9d3dc", tier: 9 },
+  altin:  { name: "Altın",       color: "#f2c14e", tier: 12 },
+  platin: { name: "Platin",      color: "#3fc6c9", tier: 15 },
+  elmas:  { name: "Elmas",       color: "#c77dff", tier: 18 },
+  yucel:  { name: "Yücelik",     color: "#3ee08f", tier: 21 },
+  immo:   { name: "Ölümsüzlük",  color: "#ff4d6d", tier: 24 },
 };
 
 /*  PAKETLER
@@ -59,7 +62,9 @@ const pkgName = (p) => `${RANKS[p.from].name} → ${RANKS[p.to].name} Boost`;
 function emblem(key) {
   const r = RANKS[key];
   return `<span class="emblem" style="--rc:${r.color}">
-      <svg><use href="#i-rank"/></svg><small>${r.name}</small></span>`;
+      <img src="${RANK_ICON(r.tier)}" alt="${r.name} rank simgesi" width="64" height="64" loading="lazy"
+           onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emblem__fb',innerHTML:'<svg><use href=&quot;#i-rank&quot;/></svg>'}))">
+      <small>${r.name}</small></span>`;
 }
 
 function renderPackages() {
