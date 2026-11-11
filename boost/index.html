@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KEYFS Boost — Valorant Elo Boost</title>
+  <meta name="description" content="Radiant oyuncular tarafından, hilesiz ve tamamen el emeğiyle Valorant elo boost. Gümüşten Yüceliğe, Ölümsüzlüğe kadar paketler.">
+  <meta name="theme-color" content="#08050f">
+  <meta property="og:title" content="KEYFS Boost — Valorant Elo Boost">
+  <meta property="og:description" content="Radiant booster kadrosu, hilesiz boost. Paketler ve sipariş Discord üzerinden.">
+  <meta property="og:image" content="assets/keyfs-logo.png">
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="bg" aria-hidden="true">
+    <span class="bg__glow bg__glow--1"></span>
+    <span class="bg__glow bg__glow--2"></span>
+    <span class="bg__grid"></span>
+  </div>
+
+  <!-- ============ ÜST MENÜ ============ -->
+  <header class="nav" id="top">
+    <div class="container nav__inner">
+      <a href="#top" class="brand">
+        <img src="assets/keyfs-logo.png" alt="" width="40" height="40">
+        <span>KEYFS<b>BOOST</b></span>
+      </a>
+      <nav class="nav__links" id="navLinks">
+        <a href="#paketler">Paketler</a>
+        <a href="#nasil">Nasıl Çalışır</a>
+        <a href="#risk">Riskler</a>
+        <a href="#sss">SSS</a>
+      </nav>
+      <a href="#paketler" class="btn btn--primary btn--sm nav__cta">Sipariş Ver</a>
+      <button class="nav__burger" id="burger" aria-label="Menüyü aç" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="container hero__inner">
+        <div class="hero__text">
+          <span class="pill"><span class="dot"></span> Radiant booster kadrosu aktif</span>
+          <h1>Rankını <span class="grad">Radiant</span> ellere bırak.</h1>
+          <p class="lead">
+            Tüm boostlarımız <strong>Radiant seviyesindeki oyuncular</strong> tarafından,
+            <strong>%100 hilesiz</strong> ve tamamen el emeğiyle yapılır. Hiçbir üçüncü parti
+            yazılım, makro ya da bot kullanılmaz.
+          </p>
+          <div class="hero__actions">
+            <a href="#paketler" class="btn btn--primary">Paketleri Gör</a>
+            <a href="#risk" class="btn btn--ghost">Riskleri Oku</a>
+          </div>
+          <ul class="hero__badges">
+            <li><svg><use href="#i-shield"/></svg>Hilesiz</li>
+            <li><svg><use href="#i-crown"/></svg>Radiant Booster</li>
+            <li><svg><use href="#i-chat"/></svg>Discord Destek</li>
+          </ul>
+        </div>
+        <div class="hero__logo">
+          <div class="logo-ring">
+            <img src="assets/keyfs-logo.png" alt="KEYFS logosu" width="420" height="420">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ KISA RİSK BANDI ============ -->
+    <div class="container">
+      <a href="#risk" class="warn-strip">
+        <svg><use href="#i-alert"/></svg>
+        <p><strong>Önemli:</strong> Elo boost, Riot Games kullanım şartlarına göre <strong>yasaktır</strong>
+          ve hilesiz yapılsa bile hesabın için <strong>ban riski taşır</strong>. Sipariş vermeden önce lütfen okuyun.</p>
+        <span class="warn-strip__more">Detaylar →</span>
+      </a>
+    </div>
+
+    <!-- ============ PAKETLER ============ -->
+    <section class="section" id="paketler">
+      <div class="container">
+        <div class="section__head">
+          <span class="eyebrow">Paketler</span>
+          <h2>Hedef rankını seç</h2>
+          <p>Paketini seç, <strong>Sipariş Ver</strong>'e bas, Discord sunucumuzda ticket aç. Gerisini Radiant kadromuz halleder.</p>
+        </div>
+
+        <div class="filters" role="tablist" aria-label="Paket filtresi">
+          <button class="filter is-active" data-filter="all">Tümü</button>
+          <button class="filter" data-filter="tek">Tek Rank</button>
+          <button class="filter" data-filter="kombo">Kombo Paket</button>
+        </div>
+
+        <div class="packages" id="packages"><!-- script.js ile doldurulur --></div>
+
+        <p class="packages__note">Fiyatlar tek rank (3 kademe) atlama içindir. Özel istekler (kademe bazlı, duo boost, placement) için Discord'dan yazın.</p>
+      </div>
+    </section>
+
+    <!-- ============ NEDEN BİZ ============ -->
+    <section class="section section--alt">
+      <div class="container">
+        <div class="section__head">
+          <span class="eyebrow">Neden KEYFS?</span>
+          <h2>Hile yok, şans yok — sadece aim</h2>
+        </div>
+        <div class="features">
+          <article class="feature">
+            <div class="feature__icon"><svg><use href="#i-shield"/></svg></div>
+            <h3>%100 Hilesiz</h3>
+            <p>Wallhack, aimbot, makro ya da herhangi bir üçüncü parti program asla kullanılmaz. Her maç gerçek oyuncu, gerçek el emeği.</p>
+          </article>
+          <article class="feature">
+            <div class="feature__icon"><svg><use href="#i-crown"/></svg></div>
+            <h3>Radiant Kadro</h3>
+            <p>Boostlar yalnızca Radiant seviyesine ulaşmış, deneyimli oyuncular tarafından yapılır.</p>
+          </article>
+          <article class="feature">
+            <div class="feature__icon"><svg><use href="#i-eye"/></svg></div>
+            <h3>Şeffaf Süreç</h3>
+            <p>Siparişinin ilerleyişini Discord ticket'ı üzerinden takip edersin. Riskleri de saklamadan açıkça söylüyoruz.</p>
+          </article>
+          <article class="feature">
+            <div class="feature__icon"><svg><use href="#i-chat"/></svg></div>
+            <h3>Canlı Destek</h3>
+            <p>Sorun, soru, özel istek — Discord sunucumuzda doğrudan ekiple konuşursun.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ NASIL ÇALIŞIR ============ -->
+    <section class="section" id="nasil">
+      <div class="container">
+        <div class="section__head">
+          <span class="eyebrow">Nasıl Çalışır?</span>
+          <h2>4 adımda yeni rankına</h2>
+        </div>
+        <ol class="steps">
+          <li class="step"><span class="step__no">01</span><h3>Paketini seç</h3><p>Mevcut rankından hedef rankına uygun paketi bul.</p></li>
+          <li class="step"><span class="step__no">02</span><h3>Riskleri onayla</h3><p>Ban riskini ve kuralları okuyup kabul et.</p></li>
+          <li class="step"><span class="step__no">03</span><h3>Discord'a geç</h3><p>Sunucumuzda ticket aç, paket adını yaz, detayları konuş.</p></li>
+          <li class="step"><span class="step__no">04</span><h3>Rankını al</h3><p>Radiant booster işini bitirir, sen yeni rankının tadını çıkar.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ RİSK / UYARI ============ -->
+    <section class="section section--alt" id="risk">
+      <div class="container">
+        <div class="risk">
+          <div class="risk__icon"><svg><use href="#i-alert"/></svg></div>
+          <div>
+            <span class="eyebrow eyebrow--warn">Dürüst olalım</span>
+            <h2>Elo boost yasaktır ve ban riski vardır</h2>
+            <p class="risk__lead">Hizmetimiz hilesiz olsa da elo boost'un riskleri vardır. Bunu bilmeden sipariş vermeni istemeyiz.</p>
+            <ul class="risk__list">
+              <li><strong>Riot kurallarına aykırıdır.</strong> Riot Games'in Hizmet Şartları, hesabın başkasıyla paylaşılmasını ve başkasının senin yerine rank kasmasını (boosting) açıkça yasaklar.</li>
+              <li><strong>Ban riski gerçektir.</strong> Riot boost yapılmış hesapları tespit edebilir. Sonuç; uyarı, rank/MMR sıfırlama, dereceli yasağı, geçici ya da <strong>kalıcı hesap kapatma</strong> olabilir.</li>
+              <li><strong>Hilesiz olmak riski sıfırlamaz.</strong> Hile kullanılmaması Vanguard kaynaklı hile banlarını önler; ancak hesap paylaşımı ve boost tespiti ayrı bir konudur.</li>
+              <li><strong>Tespit yöntemleri değişebilir.</strong> Farklı konumdan giriş, oynanış tarzındaki ani değişim ve şikayetler (report) dikkat çekebilir.</li>
+              <li><strong>Karar ve sorumluluk senindir.</strong> Bu riskleri kabul ederek sipariş verirsin. Kaybetmekten korktuğun, çok değerli bir hesapla işlem yapmamanı tavsiye ederiz.</li>
+            </ul>
+            <p class="risk__foot">KEYFS Boost, Riot Games ile bağlantılı değildir ve Riot Games tarafından onaylanmamıştır.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SSS ============ -->
+    <section class="section" id="sss">
+      <div class="container container--narrow">
+        <div class="section__head">
+          <span class="eyebrow">SSS</span>
+          <h2>Sıkça sorulan sorular</h2>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>Boost sırasında hile kullanılıyor mu?</summary>
+            <p>Hayır. Tüm maçlar Radiant seviyesindeki oyuncular tarafından tamamen el emeğiyle oynanır. Hiçbir hile, makro veya üçüncü parti yazılım kullanılmaz.</p>
+          </details>
+          <details>
+            <summary>Hesabım banlanabilir mi?</summary>
+            <p>Evet, bu risk vardır. Elo boost Riot'un kurallarına aykırıdır ve tespit edilmesi halinde hesabına yaptırım uygulanabilir. Bu riski sıfıra indirmek mümkün değildir; ayrıntılar için <a href="#risk">Riskler</a> bölümünü oku.</p>
+          </details>
+          <details>
+            <summary>Sipariş nasıl veriliyor?</summary>
+            <p>Paketin üzerindeki <strong>Sipariş Ver</strong> butonuna bas, riskleri onayla. Paket adı otomatik kopyalanır ve Discord sunucumuza yönlendirilirsin. Orada ticket açıp paket adını yapıştırman yeterli.</p>
+          </details>
+          <details>
+            <summary>Boost ne kadar sürer?</summary>
+            <p>Paket büyüklüğüne ve booster yoğunluğuna göre değişir. Tahmini süreyi ticket açtığında ekibimiz sana iletir.</p>
+          </details>
+          <details>
+            <summary>Fiyatlar neden "yakında" yazıyor?</summary>
+            <p>Güncel fiyatlar için Discord sunucumuza göz atabilir veya ticket açarak sorabilirsin.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CTA ============ -->
+    <section class="section">
+      <div class="container">
+        <div class="cta">
+          <img src="assets/keyfs-logo.png" alt="" width="96" height="96">
+          <h2>Sorun mu var? Discord'a gel.</h2>
+          <p>Özel paket, duo boost ya da sadece soru — ekibimiz Discord'da.</p>
+          <a href="#" class="btn btn--primary" data-discord>Discord Sunucusuna Katıl</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <span class="brand brand--sm"><img src="assets/keyfs-logo.png" alt="" width="28" height="28"><span>KEYFS<b>BOOST</b></span></span>
+      <p>© <span id="year"></span> KEYFS Boost. Valorant, Riot Games, Inc.'in tescilli markasıdır. Bu site Riot Games ile bağlantılı değildir.</p>
+    </div>
+  </footer>
+
+  <!-- ============ SİPARİŞ ONAY PENCERESİ ============ -->
+  <div class="modal" id="orderModal" hidden>
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal__x" data-close aria-label="Kapat">×</button>
+      <span class="eyebrow">Sipariş</span>
+      <h3 id="modalTitle">Paket</h3>
+      <p class="modal__price" id="modalPrice"></p>
+      <div class="modal__warn">
+        <svg><use href="#i-alert"/></svg>
+        <p>Elo boost Riot Games kurallarına göre yasaktır. Hilesiz yapılsa bile hesabın <strong>uyarı, rank sıfırlama veya ban</strong> alabilir.</p>
+      </div>
+      <label class="check">
+        <input type="checkbox" id="riskCheck">
+        <span>Riskleri okudum, anladım ve kabul ediyorum.</span>
+      </label>
+      <button class="btn btn--primary btn--block" id="goDiscord" disabled>Discord'a Git ve Sipariş Ver</button>
+      <p class="modal__hint">Paket adı panoya kopyalanacak — Discord'da ticket açınca yapıştır.</p>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ============ İKONLAR ============ -->
+  <svg class="sprite" aria-hidden="true">
+    <symbol id="i-shield" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z M8.5 12l2.5 2.5 4.5-5"/></symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5L3 8Z"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M4 5h16v11H9l-5 4V5Z M8 10h.01M12 10h.01M16 10h.01"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 3 2 20h20L12 3Z"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 10v4M12 17h.01"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="m5 12 4.5 4.5L19 7"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+    <!-- Basit rank amblemi (orijinal tasarım, renk JS'ten gelir) -->
+    <symbol id="i-rank" viewBox="0 0 48 48"><path d="M24 3 42 13v22L24 45 6 35V13L24 3Z" fill="currentColor" opacity=".18"/><path d="M24 3 42 13v22L24 45 6 35V13L24 3Z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M24 12 33 24 24 36 15 24Z" fill="currentColor"/></symbol>
+  </svg>
+
+  <script src="script.js"></script>
+</body>
+</html>
