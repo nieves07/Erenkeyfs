@@ -1,5 +1,5 @@
 /* =========================================================
-   KEYFS BOOST — AYARLAR
+   OWLRANK ELOBOOST — AYARLAR
    Sadece bu bölümü düzenlemen yeterli.
    ========================================================= */
 const CONFIG = {
@@ -217,7 +217,7 @@ const goBtn = $("#goDiscord");
 function orderText() {
   const p = calcPrice();
   return [
-    "KEYFS Boost Siparişi",
+    "OwlRank EloBoost Siparişi",
     `Rank: ${levelName(state.from)} → ${levelName(state.to)} (${state.to - state.from} kademe)`,
     `Booster: ${BOOSTERS[state.booster].name}`,
     `Fiyat: ${p == null ? "Belirlenecek" : money(p)}`,

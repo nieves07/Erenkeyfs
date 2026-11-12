@@ -1,6 +1,6 @@
-# 🦉 KEYFS Boost — Valorant Elo Boost Sitesi
+# 🦉 OwlRank EloBoost — Valorant Elo Boost Sitesi
 
-Mor/gece temalı, KEYFS logolu tek sayfalık boost sitesi.
+Mor/gece temalı, baykuş logolu tek sayfalık boost sitesi.
 Canlı adres: https://nieves07.github.io/Erenkeyfs/boost/
 
 ## Boost hesaplayıcı

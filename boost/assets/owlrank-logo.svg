@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="OwlRank logosu">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="65%">
+      <stop offset="0" stop-color="#1f1238"/>
+      <stop offset="1" stop-color="#07040e"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#c4b5fd"/>
+      <stop offset=".5" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#c026d3"/>
+    </linearGradient>
+    <linearGradient id="head" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#3b1a78"/>
+    </linearGradient>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a1650"/>
+      <stop offset="1" stop-color="#140a28"/>
+    </linearGradient>
+    <radialGradient id="eye" cx="50%" cy="45%" r="55%">
+      <stop offset="0" stop-color="#f5f3ff"/>
+      <stop offset=".35" stop-color="#c4b5fd"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e9d5ff"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="9" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Zemin -->
+  <circle cx="256" cy="256" r="248" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="236" fill="none" stroke="url(#ring)" stroke-width="8" opacity=".9"/>
+
+  <!-- Taç -->
+  <path d="M206 92 L224 120 L256 78 L288 120 L306 92 L300 136 H212 Z" fill="url(#gold)" filter="url(#glow)"/>
+
+  <!-- Baş ve kulak tüyleri -->
+  <path d="M128 176 L150 96 L222 150 Q256 140 290 150 L362 96 L384 176
+           Q410 240 394 304 Q368 398 256 424 Q144 398 118 304 Q102 240 128 176 Z"
+        fill="url(#head)"/>
+
+  <!-- Yüz diski -->
+  <path d="M256 186 Q214 160 178 176 Q132 198 140 254 Q148 312 206 324 Q238 330 256 352
+           Q274 330 306 324 Q364 312 372 254 Q380 198 334 176 Q298 160 256 186 Z"
+        fill="url(#face)"/>
+
+  <!-- Kaşlar (kararlı bakış) -->
+  <path d="M146 196 L244 236 L236 250 L150 214 Z" fill="#c4b5fd"/>
+  <path d="M366 196 L268 236 L276 250 L362 214 Z" fill="#c4b5fd"/>
+
+  <!-- Gözler -->
+  <g filter="url(#glow)">
+    <circle cx="202" cy="262" r="36" fill="url(#eye)"/>
+    <circle cx="310" cy="262" r="36" fill="url(#eye)"/>
+  </g>
+  <circle cx="204" cy="266" r="15" fill="#0b0618"/>
+  <circle cx="308" cy="266" r="15" fill="#0b0618"/>
+  <circle cx="198" cy="258" r="5" fill="#fff"/>
+  <circle cx="302" cy="258" r="5" fill="#fff"/>
+
+  <!-- Gaga -->
+  <path d="M256 290 L238 314 L256 352 L274 314 Z" fill="url(#gold)"/>
+
+  <!-- Rank yükseliş okları -->
+  <g fill="none" stroke="url(#gold)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+    <path d="M214 404 L256 374 L298 404"/>
+    <path d="M226 436 L256 414 L286 436" opacity=".6"/>
+  </g>
+</svg>
