@@ -38,6 +38,19 @@ toplam yerine "Discord'da belirlenir" yazar.
 - `extra` (isteğe bağlı): bu booster için ek ücret yüzdesi
 - İlk satırdaki "Fark etmez" seçeneğini silme
 
+**Ekstra seçenekler** — `percent` fiyata eklenecek yüzde (0 = ücretsiz):
+
+```js
+{ name: "Duo Boost", desc: "...", percent: 50, tag: "Önerilen" },
+```
+
+**Müşteri yorumları** — gerçek yorumları `REVIEWS` listesine yaz, `sample: true` satırını sil
+(o satır kartta "Örnek" etiketi gösterir):
+
+```js
+{ name: "Ali", order: "Gümüş 2 → Altın 3", rating: 5, text: "Çok hızlıydı, teşekkürler!" },
+```
+
 ## Yerelde görme
 
 ```bash

@@ -35,6 +35,24 @@ const BOOSTERS = [
   { name: "Booster 3", tag: "Radiant · Gözcü", photo: null, extra: 0 },
 ];
 
+/*  EKSTRA SEÇENEKLER — percent: fiyata eklenecek yüzde (0 = ücretsiz)  */
+const EXTRAS = [
+  { name: "Duo Boost", desc: "Hesabını vermezsin, booster'la birlikte oynarsın. Daha düşük risk.", percent: 50, tag: "Önerilen" },
+  { name: "Öncelikli Sipariş", desc: "Siparişin sıranın en önüne alınır, daha hızlı biter.", percent: 25 },
+  { name: "Ajan Seçimi", desc: "Booster'ın hangi ajanlarla oynayacağını sen belirlersin.", percent: 15 },
+  { name: "Canlı Yayın", desc: "Maçları canlı yayından izleyebilirsin.", percent: 20 },
+  { name: "Çevrimdışı Mod", desc: "Booster arkadaş listende çevrimdışı görünür.", percent: 0 },
+];
+
+/*  MÜŞTERİ YORUMLARI — gerçek yorumları buraya yaz.
+    sample: true olanlar "Örnek" etiketiyle görünür; gerçek yorumu girince sample satırını sil.
+    rating: 1-5 arası yıldız                                              */
+const REVIEWS = [
+  { name: "Müşteri Adı", order: "Gümüş 2 → Altın 3", rating: 5, text: "Gerçek müşteri yorumu buraya gelecek. Discord'daki yorumlardan birini buraya kopyala.", sample: true },
+  { name: "Müşteri Adı", order: "Platin 1 → Elmas 1", rating: 5, text: "Gerçek müşteri yorumu buraya gelecek. Discord'daki yorumlardan birini buraya kopyala.", sample: true },
+  { name: "Müşteri Adı", order: "Elmas 3 → Yücelik 2", rating: 5, text: "Gerçek müşteri yorumu buraya gelecek. Discord'daki yorumlardan birini buraya kopyala.", sample: true },
+];
+
 /* ========================================================= */
 
 /* Rank sırası ve renkleri (değiştirmene gerek yok) */
@@ -63,7 +81,7 @@ const levelName = (lv) => {
   return RANKS[r].single ? RANKS[r].name : `${RANKS[r].name} ${d}`;
 };
 
-const state = { from: level(2, 1), to: level(3, 1), booster: 0 };
+const state = { from: level(2, 1), to: level(3, 1), booster: 0, extras: new Set() };
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -82,9 +100,9 @@ function calcPrice() {
     if (p == null) return null;
     total += p;
   }
-  const b = BOOSTERS[state.booster];
-  if (b.extra) total *= 1 + b.extra / 100;
-  return total;
+  let pct = BOOSTERS[state.booster].extra || 0;
+  state.extras.forEach((i) => (pct += EXTRAS[i].percent));
+  return total * (1 + pct / 100);
 }
 
 /* ---------- Çizim ---------- */
@@ -140,12 +158,44 @@ function renderBoosters() {
   }).join("");
 }
 
+function renderExtras() {
+  $("#extras").innerHTML = EXTRAS.map((x, i) => {
+    const on = state.extras.has(i);
+    return `<button class="extra${on ? " is-active" : ""}" role="checkbox" aria-checked="${on}" data-extra="${i}">
+        <span class="extra__box"><svg><use href="#i-check"/></svg></span>
+        <span class="extra__info">
+          <strong>${x.name}${x.tag ? ` <em>${x.tag}</em>` : ""}</strong>
+          <small>${x.desc}</small>
+        </span>
+        <span class="extra__pct">${x.percent ? `+%${x.percent}` : "Ücretsiz"}</span>
+      </button>`;
+  }).join("");
+}
+
+const extrasText = () =>
+  state.extras.size ? [...state.extras].sort().map((i) => EXTRAS[i].name).join(", ") : "Yok";
+
+function renderReviews() {
+  const star = (on) => `<svg class="${on ? "on" : ""}"><use href="#i-star"/></svg>`;
+  $("#reviews").innerHTML = REVIEWS.map((r) => `
+    <figure class="review${r.sample ? " review--sample" : ""}">
+      ${r.sample ? `<span class="review__sample">Örnek</span>` : ""}
+      <div class="review__stars" aria-label="${r.rating} yıldız">${[1, 2, 3, 4, 5].map((n) => star(n <= r.rating)).join("")}</div>
+      <blockquote>${r.text}</blockquote>
+      <figcaption>
+        <span class="review__avatar">${r.name.trim()[0].toUpperCase()}</span>
+        <span><strong>${r.name}</strong><small>${r.order}</small></span>
+      </figcaption>
+    </figure>`).join("");
+}
+
 function renderSummary() {
   const f = fromLevel(state.from), t = fromLevel(state.to);
   $("#sumFrom").innerHTML = `${icon(state.from, RANKS[f.r].color, 72)}<span>${levelName(state.from)}</span>`;
   $("#sumTo").innerHTML = `${icon(state.to, RANKS[t.r].color, 72)}<span>${levelName(state.to)}</span>`;
   $("#sumSteps").textContent = `${state.to - state.from} kademe`;
   $("#sumBooster").textContent = BOOSTERS[state.booster].name;
+  $("#sumExtras").textContent = extrasText();
   const p = calcPrice();
   const el = $("#sumPrice");
   el.textContent = p == null ? "Discord'da belirlenir" : money(p);
@@ -158,6 +208,7 @@ function render() {
   renderRankGrid($("#toRanks"), "to");
   renderDivs($("#toDivs"), "to");
   renderBoosters();
+  renderExtras();
   renderSummary();
 }
 
@@ -197,6 +248,13 @@ function initCalc() {
     state.booster = +btn.dataset.booster;
     render();
   });
+  $("#extras").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-extra]");
+    if (!btn) return;
+    const i = +btn.dataset.extra;
+    state.extras.has(i) ? state.extras.delete(i) : state.extras.add(i);
+    render();
+  });
 }
 
 /* ---------- Toast ---------- */
@@ -220,13 +278,14 @@ function orderText() {
     "OwlRank EloBoost Siparişi",
     `Rank: ${levelName(state.from)} → ${levelName(state.to)} (${state.to - state.from} kademe)`,
     `Booster: ${BOOSTERS[state.booster].name}`,
+    `Ekstralar: ${extrasText()}`,
     `Fiyat: ${p == null ? "Belirlenecek" : money(p)}`,
   ].join("\n");
 }
 
 function openModal() {
   $("#modalTitle").textContent = `${levelName(state.from)} → ${levelName(state.to)}`;
-  $("#modalDetail").textContent = `Booster: ${BOOSTERS[state.booster].name}`;
+  $("#modalDetail").textContent = `Booster: ${BOOSTERS[state.booster].name} · Ekstralar: ${extrasText()}`;
   const p = calcPrice();
   $("#modalPrice").textContent = p == null ? "Fiyat Discord'da belirlenir" : money(p);
   check.checked = false;
@@ -295,7 +354,7 @@ function initNav() {
 
 /* ---------- Kaydırınca beliren öğeler ---------- */
 function initReveal() {
-  const els = $$(".calc__block, .summary, .feature, .step, .risk, .cta, .faq details");
+  const els = $$(".calc__block, .summary, .review, .feature, .step, .risk, .cta, .faq details");
   if (!("IntersectionObserver" in window)) return;
   els.forEach((el) => el.classList.add("reveal"));
   const io = new IntersectionObserver(
@@ -312,6 +371,7 @@ function initReveal() {
 }
 
 render();
+renderReviews();
 initCalc();
 initOrders();
 initNav();
