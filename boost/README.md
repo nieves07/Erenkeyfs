@@ -1,30 +1,42 @@
 # 🦉 KEYFS Boost — Valorant Elo Boost Sitesi
 
 Mor/gece temalı, KEYFS logolu tek sayfalık boost sitesi.
+Canlı adres: https://nieves07.github.io/Erenkeyfs/boost/
 
-## Düzenleme (sadece `script.js` en üstü)
+## Boost hesaplayıcı
+
+Müşteri sırasıyla şunları seçer:
+1. Şu anki rankı + kademesi (Demir 1 – Ölümsüzlük 3)
+2. Hedef rankı + kademesi (Radyant dahil; mevcut ranktan düşükler kapalı)
+3. Booster (veya "Fark etmez")
+
+Sağdaki özet kutusu kademe sayısını ve toplam fiyatı gösterir.
+Sipariş Ver → risk onayı → özet panoya kopyalanır → Discord açılır.
+
+## Düzenleme (hepsi `script.js` en üstünde)
 
 ```js
-const CONFIG = {
-  discord: "https://discord.gg/ORNEK",   // ← Discord davet linkin
-  currency: "₺",
-};
+const CONFIG = { discord: "https://discord.gg/ORNEK", currency: "₺" };
 ```
 
-Fiyatlar `PACKAGES` listesinde. `price: null` → "Yakında" yazar. Fiyat yazmak için:
+**Fiyatlar** — her rankta 1 kademe atlamanın fiyatı:
 
 ```js
-{ from: "gumus", to: "yucel", type: "kombo", price: 1500, old: 1800, tag: "En Popüler" },
+const PRICES = { demir: 50, bronz: 70, gumus: 100, altin: 150, platin: 200, elmas: 300, yucel: 450, immo: 700 };
 ```
 
-- `old` (isteğe bağlı): üstü çizili eski fiyat
-- `tag` (isteğe bağlı): kartın köşesindeki etiket
-- Rank anahtarları: `demir, bronz, gumus, altin, platin, elmas, yucel, immo`
+Örnek: Gümüş 3 → Altın 2 = 1×gumus + 1×altin. Herhangi bir fiyat `null` ise
+toplam yerine "Discord'da belirlenir" yazar.
 
-## Sipariş akışı
+**Boosterlar**:
 
-Sipariş Ver → risk onay penceresi (kutucuk işaretlenmeden devam edilemez) →
-paket adı panoya kopyalanır → Discord sunucusu yeni sekmede açılır.
+```js
+{ name: "Ahmet", tag: "Radiant · Düellocu", photo: "assets/boosters/ahmet.png", extra: 10 },
+```
+
+- `photo` (isteğe bağlı): resim yoksa ismin baş harfleri gösterilir
+- `extra` (isteğe bağlı): bu booster için ek ücret yüzdesi
+- İlk satırdaki "Fark etmez" seçeneğini silme
 
 ## Yerelde görme
 

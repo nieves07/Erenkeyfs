@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>KEYFS Boost — Valorant Elo Boost</title>
-  <meta name="description" content="Radiant oyuncular tarafından, hilesiz ve tamamen el emeğiyle Valorant elo boost. Gümüşten Yüceliğe, Ölümsüzlüğe kadar paketler.">
+  <meta name="description" content="Radiant oyuncular tarafından, hilesiz ve tamamen el emeğiyle Valorant elo boost. Rankını ve hedefini seç, booster'ını belirle.">
   <meta name="theme-color" content="#08050f">
   <meta property="og:title" content="KEYFS Boost — Valorant Elo Boost">
-  <meta property="og:description" content="Radiant booster kadrosu, hilesiz boost. Paketler ve sipariş Discord üzerinden.">
+  <meta property="og:description" content="Radiant booster kadrosu, hilesiz boost. Rankını seç, sipariş Discord üzerinden.">
   <meta property="og:image" content="assets/keyfs-logo.png">
   <link rel="icon" href="assets/favicon.png" type="image/png">
 
@@ -32,12 +32,12 @@
         <span>KEYFS<b>BOOST</b></span>
       </a>
       <nav class="nav__links" id="navLinks">
-        <a href="#paketler">Paketler</a>
+        <a href="#boost">Boost Hesapla</a>
         <a href="#nasil">Nasıl Çalışır</a>
         <a href="#risk">Riskler</a>
         <a href="#sss">SSS</a>
       </nav>
-      <a href="#paketler" class="btn btn--primary btn--sm nav__cta">Sipariş Ver</a>
+      <a href="#boost" class="btn btn--primary btn--sm nav__cta">Sipariş Ver</a>
       <button class="nav__burger" id="burger" aria-label="Menüyü aç" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -57,7 +57,7 @@
             yazılım, makro ya da bot kullanılmaz.
           </p>
           <div class="hero__actions">
-            <a href="#paketler" class="btn btn--primary">Paketleri Gör</a>
+            <a href="#boost" class="btn btn--primary">Boost Hesapla</a>
             <a href="#risk" class="btn btn--ghost">Riskleri Oku</a>
           </div>
           <ul class="hero__badges">
@@ -84,24 +84,58 @@
       </a>
     </div>
 
-    <!-- ============ PAKETLER ============ -->
-    <section class="section" id="paketler">
+    <!-- ============ BOOST HESAPLA ============ -->
+    <section class="section" id="boost">
       <div class="container">
         <div class="section__head">
-          <span class="eyebrow">Paketler</span>
-          <h2>Hedef rankını seç</h2>
-          <p>Paketini seç, <strong>Sipariş Ver</strong>'e bas, Discord sunucumuzda ticket aç. Gerisini Radiant kadromuz halleder.</p>
+          <span class="eyebrow">Boost Hesapla</span>
+          <h2>Rankını seç, hedefini belirle</h2>
+          <p>Şu anki rankını ve ulaşmak istediğin rankı seç, istersen booster'ını da belirle. <strong>Sipariş Ver</strong>'e bas, Discord'da ticket aç.</p>
         </div>
 
-        <div class="filters" role="tablist" aria-label="Paket filtresi">
-          <button class="filter is-active" data-filter="all">Tümü</button>
-          <button class="filter" data-filter="tek">Tek Rank</button>
-          <button class="filter" data-filter="kombo">Kombo Paket</button>
+        <div class="calc">
+          <div class="calc__main">
+            <!-- 1. Mevcut rank -->
+            <div class="calc__block">
+              <div class="calc__title"><span class="calc__no">1</span><h3>Şu anki rankın</h3></div>
+              <div class="rank-grid" id="fromRanks" role="radiogroup" aria-label="Şu anki rank"></div>
+              <div class="divs" id="fromDivs" role="radiogroup" aria-label="Şu anki kademe"></div>
+            </div>
+
+            <!-- 2. Hedef rank -->
+            <div class="calc__block">
+              <div class="calc__title"><span class="calc__no">2</span><h3>Hedef rankın</h3></div>
+              <div class="rank-grid" id="toRanks" role="radiogroup" aria-label="Hedef rank"></div>
+              <div class="divs" id="toDivs" role="radiogroup" aria-label="Hedef kademe"></div>
+            </div>
+
+            <!-- 3. Booster -->
+            <div class="calc__block">
+              <div class="calc__title"><span class="calc__no">3</span><h3>Booster'ını seç</h3></div>
+              <div class="boosters" id="boosters" role="radiogroup" aria-label="Booster"></div>
+            </div>
+          </div>
+
+          <!-- Özet -->
+          <aside class="summary" aria-live="polite">
+            <span class="eyebrow">Sipariş Özeti</span>
+            <div class="summary__ranks">
+              <div class="summary__rank" id="sumFrom"></div>
+              <svg class="summary__arrow"><use href="#i-arrow"/></svg>
+              <div class="summary__rank" id="sumTo"></div>
+            </div>
+            <dl class="summary__list">
+              <div><dt>Atlanacak kademe</dt><dd id="sumSteps">–</dd></div>
+              <div><dt>Booster</dt><dd id="sumBooster">–</dd></div>
+            </dl>
+            <div class="summary__price">
+              <span>Toplam</span>
+              <strong id="sumPrice">–</strong>
+            </div>
+            <button class="btn btn--primary btn--block" id="orderBtn">Sipariş Ver</button>
+            <p class="summary__note">%100 hilesiz · Radiant booster · Discord'dan takip</p>
+          </aside>
         </div>
-
-        <div class="packages" id="packages"><!-- script.js ile doldurulur --></div>
-
-        <p class="packages__note">Fiyatlar tek rank (3 kademe) atlama içindir. Özel istekler (kademe bazlı, duo boost, placement) için Discord'dan yazın.</p>
       </div>
     </section>
 
@@ -145,9 +179,9 @@
           <h2>4 adımda yeni rankına</h2>
         </div>
         <ol class="steps">
-          <li class="step"><span class="step__no">01</span><h3>Paketini seç</h3><p>Mevcut rankından hedef rankına uygun paketi bul.</p></li>
+          <li class="step"><span class="step__no">01</span><h3>Rankını seç</h3><p>Şu anki rankını, hedef rankını ve booster'ını seç.</p></li>
           <li class="step"><span class="step__no">02</span><h3>Riskleri onayla</h3><p>Ban riskini ve kuralları okuyup kabul et.</p></li>
-          <li class="step"><span class="step__no">03</span><h3>Discord'a geç</h3><p>Sunucumuzda ticket aç, paket adını yaz, detayları konuş.</p></li>
+          <li class="step"><span class="step__no">03</span><h3>Discord'a geç</h3><p>Sunucumuzda ticket aç, sipariş özetini yapıştır, detayları konuş.</p></li>
           <li class="step"><span class="step__no">04</span><h3>Rankını al</h3><p>Radiant booster işini bitirir, sen yeni rankının tadını çıkar.</p></li>
         </ol>
       </div>
@@ -193,15 +227,15 @@
           </details>
           <details>
             <summary>Sipariş nasıl veriliyor?</summary>
-            <p>Paketin üzerindeki <strong>Sipariş Ver</strong> butonuna bas, riskleri onayla. Paket adı otomatik kopyalanır ve Discord sunucumuza yönlendirilirsin. Orada ticket açıp paket adını yapıştırman yeterli.</p>
+            <p>Rankını, hedef rankını ve booster'ını seçip <strong>Sipariş Ver</strong>'e bas, riskleri onayla. Sipariş özeti otomatik kopyalanır ve Discord sunucumuza yönlendirilirsin. Orada ticket açıp özeti yapıştırman yeterli.</p>
           </details>
           <details>
             <summary>Boost ne kadar sürer?</summary>
-            <p>Paket büyüklüğüne ve booster yoğunluğuna göre değişir. Tahmini süreyi ticket açtığında ekibimiz sana iletir.</p>
+            <p>Atlanacak kademe sayısına ve booster yoğunluğuna göre değişir. Tahmini süreyi ticket açtığında ekibimiz sana iletir.</p>
           </details>
           <details>
-            <summary>Fiyatlar neden "yakında" yazıyor?</summary>
-            <p>Güncel fiyatlar için Discord sunucumuza göz atabilir veya ticket açarak sorabilirsin.</p>
+            <summary>Booster seçmek zorunda mıyım?</summary>
+            <p>Hayır. "Fark etmez" seçersen siparişin ilk müsait Radiant booster'a verilir. Belirli bir booster istersen onu seçebilirsin.</p>
           </details>
         </div>
       </div>
@@ -213,7 +247,7 @@
         <div class="cta">
           <img src="assets/keyfs-logo.png" alt="" width="96" height="96">
           <h2>Sorun mu var? Discord'a gel.</h2>
-          <p>Özel paket, duo boost ya da sadece soru — ekibimiz Discord'da.</p>
+          <p>Özel istek, duo boost ya da sadece soru — ekibimiz Discord'da.</p>
           <a href="#" class="btn btn--primary" data-discord>Discord Sunucusuna Katıl</a>
         </div>
       </div>
@@ -233,7 +267,8 @@
     <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <button class="modal__x" data-close aria-label="Kapat">×</button>
       <span class="eyebrow">Sipariş</span>
-      <h3 id="modalTitle">Paket</h3>
+      <h3 id="modalTitle">Sipariş</h3>
+      <p class="modal__detail" id="modalDetail"></p>
       <p class="modal__price" id="modalPrice"></p>
       <div class="modal__warn">
         <svg><use href="#i-alert"/></svg>
@@ -244,7 +279,7 @@
         <span>Riskleri okudum, anladım ve kabul ediyorum.</span>
       </label>
       <button class="btn btn--primary btn--block" id="goDiscord" disabled>Discord'a Git ve Sipariş Ver</button>
-      <p class="modal__hint">Paket adı panoya kopyalanacak — Discord'da ticket açınca yapıştır.</p>
+      <p class="modal__hint">Sipariş özeti panoya kopyalanacak — Discord'da ticket açınca yapıştır.</p>
     </div>
   </div>
 
@@ -259,6 +294,7 @@
     <symbol id="i-alert" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M12 3 2 20h20L12 3Z"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 10v4M12 17h.01"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="m5 12 4.5 4.5L19 7"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+    <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="9" r="1.4" fill="currentColor"/><circle cx="15" cy="15" r="1.4" fill="currentColor"/><circle cx="15" cy="9" r="1.4" fill="currentColor"/><circle cx="9" cy="15" r="1.4" fill="currentColor"/></symbol>
     <!-- Basit rank amblemi (orijinal tasarım, renk JS'ten gelir) -->
     <symbol id="i-rank" viewBox="0 0 48 48"><path d="M24 3 42 13v22L24 45 6 35V13L24 3Z" fill="currentColor" opacity=".18"/><path d="M24 3 42 13v22L24 45 6 35V13L24 3Z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M24 12 33 24 24 36 15 24Z" fill="currentColor"/></symbol>
   </svg>

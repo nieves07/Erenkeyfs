@@ -9,98 +9,194 @@ const CONFIG = {
   currency: "₺",
 };
 
-/* Rank bilgileri: renk + resmi Valorant rank simgesi (tier numarası)
-   Simgeler valorant-api.com'dan yüklenir; yüklenemezse sade simge görünür. */
-const RANK_ICON = (tier) =>
-  `https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/${tier}/largeicon.png`;
-const RANKS = {
-  demir:  { name: "Demir",       color: "#8d8f99", tier: 3 },
-  bronz:  { name: "Bronz",       color: "#c0814f", tier: 6 },
-  gumus:  { name: "Gümüş",       color: "#c9d3dc", tier: 9 },
-  altin:  { name: "Altın",       color: "#f2c14e", tier: 12 },
-  platin: { name: "Platin",      color: "#3fc6c9", tier: 15 },
-  elmas:  { name: "Elmas",       color: "#c77dff", tier: 18 },
-  yucel:  { name: "Yücelik",     color: "#3ee08f", tier: 21 },
-  immo:   { name: "Ölümsüzlük",  color: "#ff4d6d", tier: 24 },
+/*  FİYATLAR — her rankta 1 kademe atlamanın fiyatı.
+    Örnek: gumus: 120  ->  Gümüş 1→2, 2→3 ve 3→Altın 1 her biri 120 ₺.
+    null bırakırsan toplam yerine "Discord'da belirlenir" yazar.            */
+const PRICES = {
+  demir:  null,
+  bronz:  null,
+  gumus:  null,
+  altin:  null,
+  platin: null,
+  elmas:  null,
+  yucel:  null,
+  immo:   null,   // Ölümsüzlük 1→2, 2→3 ve 3→Radyant
 };
 
-/*  PAKETLER
-    price: null  -> "Yakında" yazar. Fiyat girmek için sayı yaz: price: 750
-    old:   (isteğe bağlı) üstü çizili eski fiyat
-    type:  "tek" ya da "kombo"
-    tag:   (isteğe bağlı) kartın köşesindeki etiket                     */
-const PACKAGES = [
-  { from: "demir",  to: "bronz",  type: "tek",   price: null },
-  { from: "bronz",  to: "gumus",  type: "tek",   price: null },
-  { from: "gumus",  to: "altin",  type: "tek",   price: null },
-  { from: "altin",  to: "platin", type: "tek",   price: null },
-  { from: "platin", to: "elmas",  type: "tek",   price: null },
-  { from: "elmas",  to: "yucel",  type: "tek",   price: null },
-  { from: "yucel",  to: "immo",   type: "tek",   price: null, tag: "Elit" },
-  { from: "gumus",  to: "yucel",  type: "kombo", price: null, tag: "En Popüler" },
-  { from: "gumus",  to: "immo",   type: "kombo", price: null, tag: "Full Paket" },
-  { from: "altin",  to: "yucel",  type: "kombo", price: null },
-  { from: "altin",  to: "immo",   type: "kombo", price: null },
-  { from: "platin", to: "immo",   type: "kombo", price: null },
+/*  BOOSTERLAR — ilerde gerçek booster'ları buraya yazacağız.
+    name:  görünen isim
+    tag:   ismin altındaki kısa yazı (rank, rol vb.)
+    photo: (isteğe bağlı) "assets/boosters/isim.png" gibi bir resim yolu
+    extra: (isteğe bağlı) bu booster için ek ücret yüzdesi, örn. 10 = %10  */
+const BOOSTERS = [
+  { name: "Fark etmez", tag: "İlk müsait Radiant booster", any: true },
+  { name: "Booster 1", tag: "Radiant · Düellocu", photo: null, extra: 0 },
+  { name: "Booster 2", tag: "Radiant · Kontrol Uzmanı", photo: null, extra: 0 },
+  { name: "Booster 3", tag: "Radiant · Gözcü", photo: null, extra: 0 },
 ];
-
-const FEATURES = {
-  tek:   ["Radiant booster", "%100 hilesiz", "Discord'dan takip"],
-  kombo: ["Radiant booster", "%100 hilesiz", "Discord'dan takip", "Kombo indirimi"],
-};
 
 /* ========================================================= */
 
+/* Rank sırası ve renkleri (değiştirmene gerek yok) */
+const RANKS = [
+  { key: "demir",  name: "Demir",      color: "#8d8f99" },
+  { key: "bronz",  name: "Bronz",      color: "#c0814f" },
+  { key: "gumus",  name: "Gümüş",      color: "#c9d3dc" },
+  { key: "altin",  name: "Altın",      color: "#f2c14e" },
+  { key: "platin", name: "Platin",     color: "#3fc6c9" },
+  { key: "elmas",  name: "Elmas",      color: "#c77dff" },
+  { key: "yucel",  name: "Yücelik",    color: "#3ee08f" },
+  { key: "immo",   name: "Ölümsüzlük", color: "#ff4d6d" },
+  { key: "radyant", name: "Radyant",   color: "#ffe39a", single: true },
+];
+const RADIANT_LEVEL = 24; // 8 rank × 3 kademe
+
+/* Resmi rank simgeleri (valorant-api.com). Yüklenemezse sade simge görünür. */
+const RANK_ICON = (level) =>
+  `https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/${3 + level}/largeicon.png`;
+
+/* Seviye: Demir 1 = 0, Demir 2 = 1 ... Ölümsüzlük 3 = 23, Radyant = 24 */
+const level = (rankIdx, div) => (RANKS[rankIdx].single ? RADIANT_LEVEL : rankIdx * 3 + (div - 1));
+const fromLevel = (lv) => (lv >= RADIANT_LEVEL ? { r: 8, d: 1 } : { r: Math.floor(lv / 3), d: (lv % 3) + 1 });
+const levelName = (lv) => {
+  const { r, d } = fromLevel(lv);
+  return RANKS[r].single ? RANKS[r].name : `${RANKS[r].name} ${d}`;
+};
+
+const state = { from: level(2, 1), to: level(3, 1), booster: 0 };
+
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const money = (n) => `${Math.round(n).toLocaleString("tr-TR")} ${CONFIG.currency}`;
 
-const fmtPrice = (p) =>
-  p == null ? "Yakında" : `${Number(p).toLocaleString("tr-TR")} ${CONFIG.currency}`;
-
-const pkgName = (p) => `${RANKS[p.from].name} → ${RANKS[p.to].name} Boost`;
-
-function emblem(key) {
-  const r = RANKS[key];
-  return `<span class="emblem" style="--rc:${r.color}">
-      <img src="${RANK_ICON(r.tier)}" alt="${r.name} rank simgesi" width="64" height="64" loading="lazy"
-           onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'emblem__fb',innerHTML:'<svg><use href=&quot;#i-rank&quot;/></svg>'}))">
-      <small>${r.name}</small></span>`;
+function icon(lv, color, size = 56) {
+  return `<img src="${RANK_ICON(lv)}" alt="" width="${size}" height="${size}" loading="lazy" style="--rc:${color}"
+    onerror="this.outerHTML='<svg class=&quot;rank-fb&quot; style=&quot;color:${color}&quot;><use href=&quot;#i-rank&quot;/></svg>'">`;
 }
 
-function renderPackages() {
-  const wrap = $("#packages");
-  wrap.innerHTML = PACKAGES.map((p, i) => `
-    <article class="pkg${p.tag ? " pkg--featured" : ""}" data-type="${p.type}"
-             style="--from:${RANKS[p.from].color};--to:${RANKS[p.to].color}">
-      ${p.tag ? `<span class="pkg__tag">${p.tag}</span>` : ""}
-      <div class="pkg__ranks">
-        ${emblem(p.from)}
-        <svg class="pkg__arrow"><use href="#i-arrow"/></svg>
-        ${emblem(p.to)}
-      </div>
-      <h3>${pkgName(p)}</h3>
-      <ul class="pkg__feats">
-        ${FEATURES[p.type].map((f) => `<li><svg><use href="#i-check"/></svg>${f}</li>`).join("")}
-      </ul>
-      <div class="pkg__price">
-        ${p.old ? `<s>${fmtPrice(p.old)}</s>` : ""}
-        <strong class="${p.price == null ? "soon" : ""}">${fmtPrice(p.price)}</strong>
-      </div>
-      <button class="btn btn--primary btn--block" data-order="${i}">Sipariş Ver</button>
-    </article>`).join("");
+/* ---------- Fiyat ---------- */
+function calcPrice() {
+  let total = 0;
+  for (let lv = state.from; lv < state.to; lv++) {
+    const p = PRICES[RANKS[fromLevel(lv).r].key];
+    if (p == null) return null;
+    total += p;
+  }
+  const b = BOOSTERS[state.booster];
+  if (b.extra) total *= 1 + b.extra / 100;
+  return total;
 }
 
-/* ---------- Filtre ---------- */
-function initFilters() {
-  $$(".filter").forEach((btn) =>
-    btn.addEventListener("click", () => {
-      $$(".filter").forEach((b) => b.classList.toggle("is-active", b === btn));
-      const f = btn.dataset.filter;
-      $$(".pkg").forEach((card) => {
-        card.hidden = f !== "all" && card.dataset.type !== f;
-      });
+/* ---------- Çizim ---------- */
+function renderRankGrid(el, side) {
+  const list = side === "from" ? RANKS.filter((r) => !r.single) : RANKS;
+  const cur = fromLevel(state[side]);
+  el.innerHTML = list
+    .map((r, i) => {
+      // Hedefte, tamamı mevcut rankın altında kalan ranklar kapalı
+      const maxLv = r.single ? RADIANT_LEVEL : i * 3 + 2;
+      const disabled = side === "to" && maxLv <= state.from;
+      const lv = r.single ? RADIANT_LEVEL : i * 3;
+      return `<button class="rank-btn${cur.r === i ? " is-active" : ""}" role="radio"
+          aria-checked="${cur.r === i}" data-rank="${i}" ${disabled ? "disabled" : ""}
+          style="--rc:${r.color}">${icon(lv, r.color)}<span>${r.name}</span></button>`;
     })
-  );
+    .join("");
+}
+
+function renderDivs(el, side) {
+  const cur = fromLevel(state[side]);
+  if (RANKS[cur.r].single) {
+    el.innerHTML = `<span class="divs__single">Radyant kademesizdir</span>`;
+    return;
+  }
+  el.innerHTML =
+    `<span class="divs__label">Kademe</span>` +
+    [1, 2, 3]
+      .map((d) => {
+        const lv = level(cur.r, d);
+        const disabled = (side === "to" && lv <= state.from) || (side === "from" && lv >= RADIANT_LEVEL);
+        return `<button class="div-btn${cur.d === d ? " is-active" : ""}" role="radio" aria-checked="${cur.d === d}"
+          data-div="${d}" ${disabled ? "disabled" : ""}>${d}</button>`;
+      })
+      .join("");
+}
+
+function renderBoosters() {
+  $("#boosters").innerHTML = BOOSTERS.map((b, i) => {
+    const initials = b.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+    const avatar = b.any
+      ? `<span class="booster__avatar booster__avatar--any"><svg><use href="#i-dice"/></svg></span>`
+      : b.photo
+        ? `<img class="booster__avatar" src="${b.photo}" alt="" width="52" height="52">`
+        : `<span class="booster__avatar">${initials}</span>`;
+    return `<button class="booster${state.booster === i ? " is-active" : ""}" role="radio"
+        aria-checked="${state.booster === i}" data-booster="${i}">
+        ${avatar}
+        <span class="booster__info"><strong>${b.name}</strong><small>${b.tag || ""}</small></span>
+        ${b.extra ? `<span class="booster__extra">+%${b.extra}</span>` : ""}
+        <span class="booster__check"><svg><use href="#i-check"/></svg></span>
+      </button>`;
+  }).join("");
+}
+
+function renderSummary() {
+  const f = fromLevel(state.from), t = fromLevel(state.to);
+  $("#sumFrom").innerHTML = `${icon(state.from, RANKS[f.r].color, 72)}<span>${levelName(state.from)}</span>`;
+  $("#sumTo").innerHTML = `${icon(state.to, RANKS[t.r].color, 72)}<span>${levelName(state.to)}</span>`;
+  $("#sumSteps").textContent = `${state.to - state.from} kademe`;
+  $("#sumBooster").textContent = BOOSTERS[state.booster].name;
+  const p = calcPrice();
+  const el = $("#sumPrice");
+  el.textContent = p == null ? "Discord'da belirlenir" : money(p);
+  el.classList.toggle("soon", p == null);
+}
+
+function render() {
+  renderRankGrid($("#fromRanks"), "from");
+  renderDivs($("#fromDivs"), "from");
+  renderRankGrid($("#toRanks"), "to");
+  renderDivs($("#toDivs"), "to");
+  renderBoosters();
+  renderSummary();
+}
+
+/* ---------- Seçimler ---------- */
+function fixTarget() {
+  if (state.to <= state.from) state.to = Math.min(state.from + 1, RADIANT_LEVEL);
+}
+
+function initCalc() {
+  const bind = (id, side) =>
+    $(id).addEventListener("click", (e) => {
+      const btn = e.target.closest("button:not(:disabled)");
+      if (!btn) return;
+      const cur = fromLevel(state[side]);
+      if (btn.dataset.rank != null) {
+        const r = +btn.dataset.rank;
+        if (RANKS[r].single) state[side] = RADIANT_LEVEL;
+        else {
+          // Aynı kademeyi koru; hedefte geçersizse geçerli ilk kademeye kay
+          let lv = level(r, cur.d);
+          if (side === "to" && lv <= state.from) lv = state.from + 1;
+          state[side] = lv;
+        }
+      } else if (btn.dataset.div != null) {
+        state[side] = level(cur.r, +btn.dataset.div);
+      }
+      if (side === "from") fixTarget();
+      render();
+    });
+  bind("#fromRanks", "from");
+  bind("#fromDivs", "from");
+  bind("#toRanks", "to");
+  bind("#toDivs", "to");
+  $("#boosters").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-booster]");
+    if (!btn) return;
+    state.booster = +btn.dataset.booster;
+    render();
+  });
 }
 
 /* ---------- Toast ---------- */
@@ -114,15 +210,25 @@ function toast(msg) {
 }
 
 /* ---------- Sipariş penceresi ---------- */
-let currentPkg = null;
 const modal = $("#orderModal");
 const check = $("#riskCheck");
 const goBtn = $("#goDiscord");
 
-function openModal(pkg) {
-  currentPkg = pkg;
-  $("#modalTitle").textContent = pkgName(pkg);
-  $("#modalPrice").textContent = fmtPrice(pkg.price);
+function orderText() {
+  const p = calcPrice();
+  return [
+    "KEYFS Boost Siparişi",
+    `Rank: ${levelName(state.from)} → ${levelName(state.to)} (${state.to - state.from} kademe)`,
+    `Booster: ${BOOSTERS[state.booster].name}`,
+    `Fiyat: ${p == null ? "Belirlenecek" : money(p)}`,
+  ].join("\n");
+}
+
+function openModal() {
+  $("#modalTitle").textContent = `${levelName(state.from)} → ${levelName(state.to)}`;
+  $("#modalDetail").textContent = `Booster: ${BOOSTERS[state.booster].name}`;
+  const p = calcPrice();
+  $("#modalPrice").textContent = p == null ? "Fiyat Discord'da belirlenir" : money(p);
   check.checked = false;
   goBtn.disabled = true;
   modal.hidden = false;
@@ -144,9 +250,8 @@ async function copy(text) {
 }
 
 function initOrders() {
+  $("#orderBtn").addEventListener("click", openModal);
   document.addEventListener("click", (e) => {
-    const orderBtn = e.target.closest("[data-order]");
-    if (orderBtn) openModal(PACKAGES[orderBtn.dataset.order]);
     if (e.target.closest("[data-close]")) closeModal();
   });
   document.addEventListener("keydown", (e) => {
@@ -155,15 +260,12 @@ function initOrders() {
   check.addEventListener("change", () => (goBtn.disabled = !check.checked));
 
   goBtn.addEventListener("click", async () => {
-    if (!currentPkg) return;
-    const text = `Sipariş: ${pkgName(currentPkg)} (${fmtPrice(currentPkg.price)})`;
-    const ok = await copy(text);
-    toast(ok ? "Paket adı kopyalandı! Discord'da ticket açıp yapıştır." : "Discord'da ticket açıp paket adını yaz.");
+    const ok = await copy(orderText());
+    toast(ok ? "Sipariş özeti kopyalandı! Discord'da ticket açıp yapıştır." : "Discord'da ticket açıp sipariş bilgilerini yaz.");
     window.open(CONFIG.discord, "_blank", "noopener");
     closeModal();
   });
 
-  // Diğer Discord butonları
   $$("[data-discord]").forEach((a) => {
     a.href = CONFIG.discord;
     a.target = "_blank";
@@ -193,7 +295,7 @@ function initNav() {
 
 /* ---------- Kaydırınca beliren öğeler ---------- */
 function initReveal() {
-  const els = $$(".pkg, .feature, .step, .risk, .cta, .faq details");
+  const els = $$(".calc__block, .summary, .feature, .step, .risk, .cta, .faq details");
   if (!("IntersectionObserver" in window)) return;
   els.forEach((el) => el.classList.add("reveal"));
   const io = new IntersectionObserver(
@@ -204,13 +306,13 @@ function initReveal() {
           io.unobserve(en.target);
         }
       }),
-    { threshold: 0.12 }
+    { threshold: 0.08 }
   );
   els.forEach((el) => io.observe(el));
 }
 
-renderPackages();
-initFilters();
+render();
+initCalc();
 initOrders();
 initNav();
 initReveal();
