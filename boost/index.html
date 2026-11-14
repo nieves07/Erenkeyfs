@@ -47,6 +47,7 @@
         <a href="#nasil" data-i18n="nav.how">Nasıl Çalışır</a>
         <a href="#risk" data-i18n="nav.risk">Riskler</a>
         <a href="#yorumlar" data-i18n="nav.reviews">Yorumlar</a>
+        <a href="#galeri" data-i18n="nav.gallery">Galeri</a>
         <a href="#sss" data-i18n="nav.faq">SSS</a>
       </nav>
       <div class="lang" role="group" aria-label="Dil / Language">
@@ -150,8 +151,10 @@
               <div><dt data-i18n="sum.steps">Atlanacak kademe</dt><dd id="sumSteps">–</dd></div>
               <div><dt>Booster</dt><dd id="sumBooster">–</dd></div>
               <div><dt data-i18n="sum.extras">Ekstralar</dt><dd id="sumExtras">–</dd></div>
+              <div class="summary__disc" id="sumLoyalRow" hidden><dt data-i18n="sum.loyalty">Sadakat indirimi</dt><dd id="sumLoyal">–</dd></div>
               <div class="summary__disc" id="sumDiscRow" hidden><dt data-i18n="sum.discount">İndirim</dt><dd id="sumDisc">–</dd></div>
             </dl>
+            <p class="loyal-hint" id="loyalHint" hidden></p>
 
             <!-- İndirim kodu -->
             <form class="coupon" id="couponForm" autocomplete="off">
@@ -212,6 +215,18 @@
           <p data-i18n="rev.sub">Discord sunucumuzdaki müşteri yorumları.</p>
         </div>
         <div class="reviews" id="reviews"></div>
+      </div>
+    </section>
+
+    <!-- ============ GALERİ ============ -->
+    <section class="section section--alt" id="galeri">
+      <div class="container">
+        <div class="section__head">
+          <span class="eyebrow" data-i18n="nav.gallery">Galeri</span>
+          <h2 data-i18n="gal.title">Tamamlanan siparişler</h2>
+          <p data-i18n="gal.sub">Müşterilerimizin boost öncesi ve sonrası rankları.</p>
+        </div>
+        <div class="gallery" id="gallery"></div>
       </div>
     </section>
 
@@ -286,6 +301,10 @@
             <p data-i18n="faq.6a">Duo boost'ta hesabını kimseyle paylaşmazsın; booster seninle aynı takımda oynar. Valorant'ın rank farkı kuralları nedeniyle booster, senin rankına uygun bir hesaptan oyuna girer. Hesap paylaşımı olmadığı için risk daha düşüktür ancak sıfır değildir.</p>
           </details>
           <details>
+            <summary data-i18n="faq.8q">Büyük siparişlerde indirim var mı?</summary>
+            <p data-i18n="faq.8a">Evet! Ne kadar çok kademe atlarsan o kadar az ödersin. Sadakat indirimi sipariş özetinde otomatik uygulanır ve indirim kodlarıyla birlikte kullanılabilir.</p>
+          </details>
+          <details>
             <summary data-i18n="faq.7q">İndirim kodunu nasıl kullanırım?</summary>
             <p data-i18n="faq.7a">Sipariş özetindeki <strong>İndirim kodu</strong> kutusuna kodu yaz ve <strong>Uygula</strong>'ya bas. İndirim toplam fiyata yansır ve Discord'a kopyalanan sipariş özetinde de yer alır.</p>
           </details>
@@ -336,6 +355,12 @@
     </div>
   </div>
 
+  <!-- ============ GALERİ BÜYÜTME ============ -->
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="lightbox__x" id="lightboxClose" aria-label="Kapat" data-i18n-aria="close">×</button>
+    <img id="lightboxImg" alt="">
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <!-- ============ İKONLAR ============ -->
@@ -348,6 +373,7 @@
     <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="m5 12 4.5 4.5L19 7"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-5-5 5 5-5 5"/></symbol>
     <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="10" r="2" fill="currentColor"/><path d="m4 18 5-5 4 4 3-3 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
     <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="9" r="1.4" fill="currentColor"/><circle cx="15" cy="15" r="1.4" fill="currentColor"/><circle cx="15" cy="9" r="1.4" fill="currentColor"/><circle cx="9" cy="15" r="1.4" fill="currentColor"/></symbol>
     <!-- Basit rank amblemi (orijinal tasarım, renk JS'ten gelir) -->
     <symbol id="i-rank" viewBox="0 0 48 48"><path d="M24 3 42 13v22L24 45 6 35V13L24 3Z" fill="currentColor" opacity=".18"/><path d="M24 3 42 13v22L24 45 6 35V13L24 3Z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M24 12 33 24 24 36 15 24Z" fill="currentColor"/></symbol>

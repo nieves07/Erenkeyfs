@@ -65,6 +65,21 @@ const CAMPAIGN = { active: true, tr: "Sezon sonuna özel %10 indirim!", en: "10%
 const CODES = { OWL10: 10, YAYIN15: 15 };
 ```
 
+**Sadakat indirimi** — çok kademe atlayana otomatik indirim (indirim koduyla toplanır):
+
+```js
+const LOYALTY = [ { min: 6, percent: 5 }, { min: 12, percent: 10 } ];   // kapatmak için: []
+```
+
+**Sipariş galerisi** — görselleri `boost/assets/galeri/` klasörüne koy, `GALLERY` listesine yaz,
+`sample: true` satırlarını sil:
+
+```js
+{ before: "assets/galeri/ali-once.png", after: "assets/galeri/ali-sonra.png", caption: "Gümüş 2 → Altın 3" },
+```
+
+Görsele tıklanınca büyük hali açılır.
+
 ## Dil (TR / EN)
 
 Menüdeki TR/EN düğmesiyle değişir; seçim tarayıcıda hatırlanır. İlk ziyarette tarayıcı

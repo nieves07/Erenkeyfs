@@ -27,6 +27,14 @@ const CODES = {
   // YAYIN15: 15,
 };
 
+/*  SADAKAT İNDİRİMİ — çok kademe atlayana otomatik indirim.
+    min: en az kaç kademe, percent: indirim yüzdesi. Kapatmak için listeyi boşalt: []
+    İndirim kodu varsa ikisi toplanır.                                       */
+const LOYALTY = [
+  { min: 6,  percent: 5 },
+  { min: 12, percent: 10 },
+];
+
 /*  FİYATLAR — her rankta 1 kademe atlamanın fiyatı.
     Örnek: gumus: 120  ->  Gümüş 1→2, 2→3 ve 3→Altın 1 her biri 120 ₺.
     null bırakırsan toplam yerine "Discord'da belirlenir" yazar.            */
@@ -78,6 +86,16 @@ const REVIEWS = [
   { name: "Müşteri Adı", order: "Elmas 3 → Yücelik 2", rating: 5, text: "Gerçek müşteri yorumu buraya gelecek. Discord'daki yorumlardan birini buraya kopyala.", sample: true },
 ];
 
+/*  SİPARİŞ GALERİSİ — tamamlanan siparişlerin önce/sonra görselleri.
+    Görselleri boost/assets/galeri/ klasörüne koyup yolunu yaz.
+    sample: true olanlar "Örnek" etiketli boş çerçeve olarak görünür.      */
+const GALLERY = [
+  { before: "", after: "", caption: "Gümüş 2 → Altın 3", sample: true },
+  { before: "", after: "", caption: "Platin 1 → Elmas 1", sample: true },
+  { before: "", after: "", caption: "Elmas 3 → Yücelik 2", sample: true },
+  // { before: "assets/galeri/ali-once.png", after: "assets/galeri/ali-sonra.png", caption: "Gümüş 2 → Altın 3" },
+];
+
 /* ========================================================= */
 
 /* Arayüz metinleri (iki dil) */
@@ -92,6 +110,9 @@ const STR = {
     codeOk: (c, p) => `${c} uygulandı: %${p} indirim`, codeBad: "Bu indirim kodu geçerli değil.", codeEmpty: "Bir indirim kodu yaz.",
     codeRemove: "Kodu kaldır", discPending: (p) => `%${p} (fiyatla birlikte)`, promoBtn: (c) => `Kod: ${c} — Uygula`,
     promoApplied: (c) => `${c} kodu uygulandı!`,
+    loyalHint: (n, p) => `<b>${n} kademe daha</b> ekle, <b>%${p} sadakat indirimi</b> kazan!`,
+    loyalMax: (p) => `En yüksek sadakat indirimini (%${p}) kazandın! 🎉`,
+    orderLoyal: "Sadakat indirimi", before: "Önce", after: "Sonra", imgSoon: "Görsel eklenecek",
   },
   en: {
     division: "Division", radiantSingle: "Radiant has no divisions", steps: (n) => `${n} division${n > 1 ? "s" : ""}`,
@@ -103,6 +124,9 @@ const STR = {
     codeOk: (c, p) => `${c} applied: ${p}% off`, codeBad: "This discount code isn't valid.", codeEmpty: "Enter a discount code.",
     codeRemove: "Remove code", discPending: (p) => `${p}% (applied to price)`, promoBtn: (c) => `Code: ${c} — Apply`,
     promoApplied: (c) => `Code ${c} applied!`,
+    loyalHint: (n, p) => `Add <b>${n} more division${n > 1 ? "s" : ""}</b> to get <b>${p}% loyalty discount</b>!`,
+    loyalMax: (p) => `You've unlocked the top loyalty discount (${p}%)! 🎉`,
+    orderLoyal: "Loyalty discount", before: "Before", after: "After", imgSoon: "Image coming soon",
   },
 };
 
@@ -158,6 +182,11 @@ function icon(lv, color, size = 56) {
 
 /* ---------- Fiyat ---------- */
 const discountPct = () => (state.code ? CODES[state.code] : 0);
+const steps = () => state.to - state.from;
+const loyaltyPct = () =>
+  LOYALTY.reduce((best, t) => (steps() >= t.min && t.percent > best ? t.percent : best), 0);
+const nextLoyalty = () =>
+  LOYALTY.filter((t) => t.percent > loyaltyPct()).sort((a, b) => a.min - b.min)[0] || null;
 
 function basePrice() {
   let total = 0;
@@ -172,7 +201,7 @@ function basePrice() {
 }
 function calcPrice() {
   const b = basePrice();
-  return b == null ? null : b * (1 - discountPct() / 100);
+  return b == null ? null : b * (1 - Math.min(discountPct() + loyaltyPct(), 100) / 100);
 }
 
 /* ---------- Çizim ---------- */
@@ -276,10 +305,26 @@ function renderSummary() {
   const p = calcPrice();
   const d = discountPct();
 
-  // İndirim satırı
+  // Sadakat indirimi
+  const lp = loyaltyPct();
+  $("#sumLoyalRow").hidden = !lp;
+  if (lp) $("#sumLoyal").textContent = base == null ? S().discPending(lp) : `−${money(base * lp / 100)} (${pct(lp)})`;
+  const hint = $("#loyalHint");
+  const next = nextLoyalty();
+  const need = next ? next.min - steps() : 0;
+  hint.classList.toggle("is-max", !next && !!lp);
+  if (next && state.to + need <= RADIANT_LEVEL) {
+    hint.hidden = false;
+    hint.innerHTML = S().loyalHint(need, next.percent);
+  } else if (!next && lp) {
+    hint.hidden = false;
+    hint.innerHTML = S().loyalMax(lp);
+  } else hint.hidden = true;
+
+  // İndirim kodu satırı
   $("#sumDiscRow").hidden = !d;
   if (d) {
-    const amount = base == null ? S().discPending(d) : `−${money(base - p)} (${pct(d)})`;
+    const amount = base == null ? S().discPending(d) : `−${money(base * d / 100)} (${pct(d)})`;
     $("#sumDisc").innerHTML = `${amount} <button type="button" class="coupon__remove" id="couponRemove" aria-label="${S().codeRemove}">×</button>`;
   }
 
@@ -287,7 +332,7 @@ function renderSummary() {
   el.textContent = p == null ? S().tbd : money(p);
   el.classList.toggle("soon", p == null);
   const old = $("#sumOld");
-  old.hidden = !(d && base != null);
+  old.hidden = !((d || lp) && base != null);
   if (!old.hidden) old.textContent = money(base);
 }
 
@@ -344,6 +389,41 @@ function initCalc() {
     state.extras.has(i) ? state.extras.delete(i) : state.extras.add(i);
     render();
   });
+}
+
+/* ---------- Galeri ---------- */
+function renderGallery() {
+  const slot = (src, label, after) => `
+    <div class="shot__img${src ? "" : " shot__img--empty"}">
+      <span class="shot__tag${after ? " shot__tag--after" : ""}">${label}</span>
+      ${src
+        ? `<button type="button" class="shot__open" data-full="${src}"><img src="${src}" alt="${label}" loading="lazy"></button>`
+        : `<span class="shot__soon"><svg><use href="#i-image"/></svg>${S().imgSoon}</span>`}
+    </div>`;
+  $("#gallery").innerHTML = GALLERY.map((g) => `
+    <figure class="shot${g.sample ? " shot--sample" : ""}">
+      ${g.sample ? `<span class="review__sample">${S().sample}</span>` : ""}
+      <div class="shot__pair">
+        ${slot(g.before, S().before, false)}
+        <svg class="shot__arrow"><use href="#i-arrow"/></svg>
+        ${slot(g.after, S().after, true)}
+      </div>
+      <figcaption>${g.caption}</figcaption>
+    </figure>`).join("");
+}
+
+function initGallery() {
+  const box = $("#lightbox");
+  const close = () => { box.hidden = true; document.body.classList.remove("no-scroll"); };
+  $("#gallery").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-full]");
+    if (!btn) return;
+    $("#lightboxImg").src = btn.dataset.full;
+    box.hidden = false;
+    document.body.classList.add("no-scroll");
+  });
+  box.addEventListener("click", (e) => { if (e.target !== $("#lightboxImg")) close(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !box.hidden) close(); });
 }
 
 /* ---------- İndirim kodu ---------- */
@@ -436,6 +516,7 @@ function applyLang(next) {
   setCouponMsg("", true);
   render();
   renderReviews();
+  renderGallery();
   renderPromo();
 }
 
@@ -474,6 +555,7 @@ function orderText() {
     `${S().booster}: ${L(BOOSTERS[state.booster])}`,
     `${S().extras}: ${extrasText()}`,
   ];
+  if (loyaltyPct()) lines.push(`${S().orderLoyal}: ${pct(loyaltyPct())}`);
   if (state.code) lines.push(`${S().orderCode}: ${state.code} (${pct(CODES[state.code])})`);
   lines.push(`${S().orderPrice}: ${p == null ? S().tbdShort : money(p)}`);
   return lines.join("\n");
@@ -552,7 +634,7 @@ function initNav() {
 
 /* ---------- Kaydırınca beliren öğeler ---------- */
 function initReveal() {
-  const els = $$(".calc__block, .summary, .review, .feature, .step, .risk, .cta, .faq details");
+  const els = $$(".calc__block, .summary, .review, .shot, .feature, .step, .risk, .cta, .faq details");
   if (!("IntersectionObserver" in window)) return;
   els.forEach((el) => el.classList.add("reveal"));
   const io = new IntersectionObserver(
@@ -571,6 +653,7 @@ function initReveal() {
 initLang();      // dili uygular ve her şeyi çizer
 initCalc();
 initCoupon();
+initGallery();
 initPromo();
 initOrders();
 initNav();
