@@ -10,6 +10,7 @@ const I18N_EN = {
   "nav.risk": "Risks",
   "nav.reviews": "Reviews",
   "nav.faq": "FAQ",
+  "nav.gallery": "Gallery",
   "cta.order": "Order Now",
   "menu": "Open menu",
   "close": "Close",
@@ -39,6 +40,7 @@ const I18N_EN = {
   "sum.steps": "Divisions",
   "sum.extras": "Extras",
   "sum.discount": "Discount",
+  "sum.loyalty": "Loyalty discount",
   "sum.total": "Total",
   "sum.note": "100% cheat-free · Radiant booster · Tracked on Discord",
   "coupon.ph": "Discount code",
@@ -59,6 +61,10 @@ const I18N_EN = {
   // Yorumlar
   "rev.title": "What our customers say",
   "rev.sub": "Customer reviews from our Discord server.",
+
+  // Galeri
+  "gal.title": "Completed orders",
+  "gal.sub": "Our customers' ranks before and after the boost.",
 
   // Nasıl çalışır
   "how.eyebrow": "How It Works",
@@ -97,6 +103,8 @@ const I18N_EN = {
   "faq.5a": 'No. If you pick "Any booster", your order goes to the first available Radiant booster. If you want a specific booster, you can choose them.',
   "faq.6q": "What is duo boost?",
   "faq.6a": "With duo boost you don't share your account with anyone; the booster plays on your team. Because of Valorant's rank disparity rules, the booster joins from an account that matches your rank. With no account sharing, the risk is lower — but not zero.",
+  "faq.8q": "Are there discounts on big orders?",
+  "faq.8a": "Yes! The more divisions you climb, the less you pay. The loyalty discount is applied automatically in the order summary and can be combined with discount codes.",
   "faq.7q": "How do I use a discount code?",
   "faq.7a": "Type your code in the <strong>Discount code</strong> box in the order summary and press <strong>Apply</strong>. The discount is applied to the total and included in the order summary copied to Discord.",
 
