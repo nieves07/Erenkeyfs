@@ -43,7 +43,13 @@ DURAKLATILDI = threading.Event()  # set ise ödüller çalışmaz
 
 
 def yaz(*parcalar):
-    print(time.strftime("[%H:%M:%S]"), *parcalar, flush=True)
+    satir = " ".join([time.strftime("[%H:%M:%S]")] + [str(p) for p in parcalar])
+    try:
+        print(satir, flush=True)
+    except UnicodeEncodeError:
+        # Konsol emojiyi/Türkçe karakteri gösteremiyorsa çökme, '?' ile yaz
+        kod = getattr(sys.stdout, "encoding", None) or "ascii"
+        print(satir.encode(kod, errors="replace").decode(kod), flush=True)
 
 
 # --------------------------------------------------------------------------
@@ -404,15 +410,19 @@ def odul_verisini_coz(ham) -> tuple[str | None, str]:
             return None, "?"
     if not isinstance(ham, dict):
         return None, "?"
-    odul = ham.get("reward") if isinstance(ham.get("reward"), dict) else {}
+    def sozluk(x):
+        return x if isinstance(x, dict) else {}
+
+    odul = sozluk(ham.get("reward"))
     baslik = ham.get("reward_title") or odul.get("title") or ham.get("title")
     kullanici = (
         ham.get("username")
-        or (ham.get("redeemer") or {}).get("username")
-        or (ham.get("user") or {}).get("username")
+        or sozluk(ham.get("redeemer")).get("username")
+        or sozluk(ham.get("user")).get("username")
+        or (ham.get("redeemer") if isinstance(ham.get("redeemer"), str) else None)
         or "?"
     )
-    return baslik, kullanici
+    return (str(baslik) if baslik else None), str(kullanici)
 
 
 async def kick_dinle(chatroom_id: int, channel_id: int | None, yonetici: OdulYoneticisi):
@@ -432,19 +442,26 @@ async def kick_dinle(chatroom_id: int, channel_id: int | None, yonetici: OdulYon
                 yaz("✓ Kick'e bağlandı, ödüller dinleniyor...")
                 bekleme = 2
                 async for mesaj in ws:
-                    olay = json.loads(mesaj)
-                    ad = olay.get("event", "")
-                    if ad == "pusher:ping":
-                        await ws.send(json.dumps({"event": "pusher:pong", "data": {}}))
-                        continue
-                    if HATA_AYIKLA and not ad.startswith("pusher"):
-                        yaz("OLAY:", ad, str(olay.get("data"))[:300])
-                    if "reward" in ad.lower() or "redeem" in ad.lower():
-                        baslik, kullanici = odul_verisini_coz(olay.get("data"))
-                        if baslik:
-                            yonetici.tetikle(baslik, kullanici)
+                    try:
+                        olay = json.loads(mesaj)
+                        ad = olay.get("event", "")
+                        if ad == "pusher:ping":
+                            await ws.send(json.dumps({"event": "pusher:pong", "data": {}}))
+                            continue
+                        if HATA_AYIKLA and not ad.startswith("pusher"):
+                            yaz("OLAY:", ad, str(olay.get("data"))[:300])
+                        if "reward" in ad.lower() or "redeem" in ad.lower():
+                            baslik, kullanici = odul_verisini_coz(olay.get("data"))
+                            if baslik:
+                                yonetici.tetikle(baslik, kullanici)
+                            else:
+                                yaz(f"UYARI: Ödül olayı geldi ama adı okunamadı: {str(olay)[:300]}")
+                    except Exception as hata:
+                        # Tek bir olayın işlenmesindeki hata bağlantıyı koparmasın
+                        yaz(f"UYARI: Olay işlenemedi ({hata.__class__.__name__}: {hata}) "
+                            f"— veri: {str(mesaj)[:300]}")
         except Exception as hata:
-            yaz(f"Bağlantı koptu ({hata.__class__.__name__}), {bekleme} sn sonra tekrar...")
+            yaz(f"Bağlantı koptu ({hata.__class__.__name__}: {hata}), {bekleme} sn sonra tekrar...")
             await asyncio.sleep(bekleme)
             bekleme = min(bekleme * 2, 30)
 
