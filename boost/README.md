@@ -51,6 +51,26 @@ toplam yerine "Discord'da belirlenir" yazar.
 { name: "Ali", order: "Gümüş 2 → Altın 3", rating: 5, text: "Çok hızlıydı, teşekkürler!" },
 ```
 
+**Kampanya bandı** — sitenin en üstündeki şerit:
+
+```js
+const CAMPAIGN = { active: true, tr: "Sezon sonuna özel %10 indirim!", en: "10% off!", code: "OWL10" };
+```
+
+`active: false` bandı gizler. `code` banttaki butona basınca otomatik uygulanır.
+
+**İndirim kodları** — `"KOD": yüzde` (büyük/küçük harf fark etmez):
+
+```js
+const CODES = { OWL10: 10, YAYIN15: 15 };
+```
+
+## Dil (TR / EN)
+
+Menüdeki TR/EN düğmesiyle değişir; seçim tarayıcıda hatırlanır. İlk ziyarette tarayıcı
+dili Türkçe değilse İngilizce açılır. Türkçe metinler `index.html` içinde, İngilizceleri
+`i18n.js` dosyasında. Ayarlardaki `name_en`, `desc_en`, `tag_en` alanları İngilizce karşılıklardır.
+
 ## Yerelde görme
 
 ```bash

@@ -431,3 +431,74 @@ svg { width: 1em; height: 1em; flex-shrink: 0; }
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* ---------- Kampanya bandı ---------- */
+.promo {
+  position: relative; z-index: 51;
+  background: linear-gradient(90deg, #5b21b6, #8b5cf6 50%, #c026d3);
+  color: #fff; font-size: 14px;
+}
+.promo__inner { display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 42px; padding: 6px 36px 6px 0; position: relative; flex-wrap: wrap; text-align: center; }
+.promo__text { font-weight: 600; }
+.promo__code {
+  padding: 4px 12px; border-radius: 99px; cursor: pointer;
+  background: rgba(0,0,0,.28); border: 1px dashed rgba(255,255,255,.6); color: #fff;
+  font: 700 12.5px var(--display); letter-spacing: .06em; transition: background .2s;
+}
+.promo__code:hover { background: rgba(0,0,0,.45); }
+.promo__x {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  background: none; border: 0; color: #fff; font-size: 22px; line-height: 1; cursor: pointer; opacity: .8; padding: 4px 8px;
+}
+.promo__x:hover { opacity: 1; }
+
+/* ---------- Dil seçici ---------- */
+.lang { display: flex; padding: 3px; border-radius: 10px; border: 1px solid var(--line-strong); background: rgba(139,92,246,.06); }
+.lang button {
+  padding: 5px 9px; border-radius: 7px; border: 0; cursor: pointer;
+  background: transparent; color: var(--muted); font: 700 12px var(--display); letter-spacing: .06em;
+  transition: background .2s, color .2s;
+}
+.lang button:hover { color: var(--text); }
+.lang button.is-active { background: var(--violet); color: #fff; }
+
+/* ---------- İndirim kodu ---------- */
+.coupon { display: flex; gap: 8px; margin-bottom: 6px; }
+.coupon input {
+  flex: 1; min-width: 0; height: 42px; padding: 0 12px; border-radius: 10px;
+  background: rgba(255,255,255,.04); border: 1px solid var(--line-strong); color: var(--text);
+  font: 600 14px var(--body); text-transform: uppercase; letter-spacing: .04em;
+}
+.coupon input::placeholder { text-transform: none; letter-spacing: 0; color: var(--muted); font-weight: 500; }
+.coupon input:focus { outline: none; border-color: var(--violet-2); box-shadow: 0 0 0 3px rgba(139,92,246,.25); }
+.coupon__btn {
+  height: 42px; padding: 0 16px; border-radius: 10px; cursor: pointer;
+  background: rgba(139,92,246,.18); border: 1px solid var(--line-strong); color: var(--violet-3);
+  font: 700 13px var(--display); letter-spacing: .05em; text-transform: uppercase; transition: background .2s;
+}
+.coupon__btn:hover { background: rgba(139,92,246,.3); }
+.coupon__msg { min-height: 18px; font-size: 12.5px; margin-bottom: 4px; }
+.coupon__msg.is-ok { color: #34d399; }
+.coupon__msg.is-bad { color: #f87171; }
+.summary__disc dd { color: #34d399; display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+.coupon__remove {
+  width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line-strong);
+  background: transparent; color: var(--muted); cursor: pointer; line-height: 1; font-size: 14px; padding: 0;
+}
+.coupon__remove:hover { color: var(--text); }
+.summary__amount { display: flex; flex-direction: column; align-items: flex-end; }
+.summary__amount s { color: var(--muted); font-size: 14px; }
+
+/* ---------- Footer imza ---------- */
+.footer__dev { width: 100%; text-align: center; margin-top: 4px; font-size: 13px; color: var(--muted); letter-spacing: .04em; }
+.footer__dev strong { color: var(--violet-3); font-family: var(--display); letter-spacing: .08em; }
+
+@media (max-width: 760px) {
+  .lang { margin-left: auto; }
+  .nav__burger { margin-left: 4px; }
+  .promo { font-size: 13px; }
+}
+@media (max-width: 560px) {
+  .nav .brand small { display: none; }
+  .nav__inner { gap: 12px; }
+}
