@@ -546,3 +546,8 @@ svg { width: 1em; height: 1em; flex-shrink: 0; }
 @media (max-width: 400px) {
   .gallery { grid-template-columns: 1fr; }
 }
+
+/* Uygun olmayan booster */
+.booster:disabled { opacity: .38; cursor: not-allowed; }
+.booster:disabled:hover { border-color: var(--line); }
+.booster__info strong { text-transform: none; letter-spacing: .02em; }

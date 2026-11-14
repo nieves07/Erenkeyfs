@@ -36,6 +36,8 @@ toplam yerine "Discord'da belirlenir" yazar.
 
 - `photo` (isteğe bağlı): resim yoksa ismin baş harfleri gösterilir
 - `extra` (isteğe bağlı): bu booster için ek ücret yüzdesi
+- `maxTo` / `minTo`: booster'ın boost yaptığı hedef rank aralığı (ör. `maxTo: "platin"`,
+  `minTo: "elmas"`). Aralık dışındaki hedeflerde booster soluk görünür, seçilemez.
 - İlk satırdaki "Fark etmez" seçeneğini silme
 
 **Ekstra seçenekler** — `percent` fiyata eklenecek yüzde (0 = ücretsiz):
