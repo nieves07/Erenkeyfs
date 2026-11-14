@@ -38,6 +38,8 @@ toplam yerine "Discord'da belirlenir" yazar.
 - `extra` (isteğe bağlı): bu booster için ek ücret yüzdesi
 - `maxTo` / `minTo`: booster'ın boost yaptığı hedef rank aralığı (ör. `maxTo: "platin"`,
   `minTo: "elmas"`). Aralık dışındaki hedeflerde booster soluk görünür, seçilemez.
+- `SPLIT_AFTER = "platin"`: Platin'i aşan siparişler ikiye bölünür (Platin 3'e kadar /
+  sonrası) ve müşteri her parça için booster'ını ayrı seçer.
 - İlk satırdaki "Fark etmez" seçeneğini silme
 
 **Ekstra seçenekler** — `percent` fiyata eklenecek yüzde (0 = ücretsiz):
