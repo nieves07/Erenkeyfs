@@ -37,10 +37,10 @@ const BOOSTERS = [
 
 /*  EKSTRA SEÇENEKLER — percent: fiyata eklenecek yüzde (0 = ücretsiz)  */
 const EXTRAS = [
-  { name: "Duo Boost", desc: "Hesabını vermezsin, booster'la birlikte oynarsın. Daha düşük risk.", percent: 50, tag: "Önerilen" },
+  { name: "Duo Boost", desc: "Hesabını vermezsin, booster'la birlikte oynarsın. Daha düşük risk.", percent: 100, tag: "Önerilen" },
   { name: "Öncelikli Sipariş", desc: "Siparişin sıranın en önüne alınır, daha hızlı biter.", percent: 25 },
   { name: "Ajan Seçimi", desc: "Booster'ın hangi ajanlarla oynayacağını sen belirlersin.", percent: 15 },
-  { name: "Canlı Yayın", desc: "Maçları canlı yayından izleyebilirsin.", percent: 20 },
+  { name: "Canlı Yayın", desc: "Maçları canlı yayından izleyebilirsin.", percent: 75 },
   { name: "Çevrimdışı Mod", desc: "Booster arkadaş listende çevrimdışı görünür.", percent: 0 },
 ];
 

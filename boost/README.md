@@ -41,7 +41,7 @@ toplam yerine "Discord'da belirlenir" yazar.
 **Ekstra seçenekler** — `percent` fiyata eklenecek yüzde (0 = ücretsiz):
 
 ```js
-{ name: "Duo Boost", desc: "...", percent: 50, tag: "Önerilen" },
+{ name: "Duo Boost", desc: "...", percent: 100, tag: "Önerilen" },
 ```
 
 **Müşteri yorumları** — gerçek yorumları `REVIEWS` listesine yaz, `sample: true` satırını sil
