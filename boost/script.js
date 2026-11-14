@@ -49,16 +49,19 @@ const PRICES = {
   immo:   null,   // Ölümsüzlük 1→2, 2→3 ve 3→Radyant
 };
 
-/*  BOOSTERLAR — ilerde gerçek booster'ları buraya yazacağız.
+/*  BOOSTERLAR
     name:  görünen isim
     tag / tag_en: ismin altındaki kısa yazı (Türkçe / İngilizce)
+    maxTo: bu booster en fazla hangi HEDEF ranka kadar boost yapar
+    minTo: bu booster en az hangi HEDEF ranktan itibaren boost yapar
+           (rank anahtarları: demir, bronz, gumus, altin, platin, elmas, yucel, immo, radyant)
     photo: (isteğe bağlı) "assets/boosters/isim.png" gibi bir resim yolu
     extra: (isteğe bağlı) bu booster için ek ücret yüzdesi, örn. 10 = %10  */
 const BOOSTERS = [
-  { name: "Fark etmez", name_en: "Any booster", tag: "İlk müsait Radiant booster", tag_en: "First available Radiant booster", any: true },
-  { name: "Booster 1", tag: "Radiant · Düellocu", tag_en: "Radiant · Duelist", photo: null, extra: 0 },
-  { name: "Booster 2", tag: "Radiant · Kontrol Uzmanı", tag_en: "Radiant · Controller", photo: null, extra: 0 },
-  { name: "Booster 3", tag: "Radiant · Gözcü", tag_en: "Radiant · Initiator", photo: null, extra: 0 },
+  { name: "Fark etmez", name_en: "Any booster", tag: "Rankına uygun ilk müsait booster", tag_en: "First available booster for your rank", any: true },
+  { name: "SERKNOXX", tag: "Demir – Platin", tag_en: "Iron – Platinum", maxTo: "platin", photo: null, extra: 0 },
+  { name: "ummut",    tag: "Demir – Platin", tag_en: "Iron – Platinum", maxTo: "platin", photo: null, extra: 0 },
+  { name: "ClorNe",   tag: "Elmas ve üstü", tag_en: "Diamond & above",  minTo: "elmas",  photo: null, extra: 0 },
 ];
 
 /*  EKSTRA SEÇENEKLER — percent: fiyata eklenecek yüzde (0 = ücretsiz)
@@ -110,6 +113,7 @@ const STR = {
     codeOk: (c, p) => `${c} uygulandı: %${p} indirim`, codeBad: "Bu indirim kodu geçerli değil.", codeEmpty: "Bir indirim kodu yaz.",
     codeRemove: "Kodu kaldır", discPending: (p) => `%${p} (fiyatla birlikte)`, promoBtn: (c) => `Kod: ${c} — Uygula`,
     promoApplied: (c) => `${c} kodu uygulandı!`,
+    boosterOff: "Bu hedef rank için uygun değil", boosterReset: (n) => `${n} bu hedef rankta boost yapmıyor, "Fark etmez" seçildi.`,
     loyalHint: (n, p) => `<b>${n} kademe daha</b> ekle, <b>%${p} sadakat indirimi</b> kazan!`,
     loyalMax: (p) => `En yüksek sadakat indirimini (%${p}) kazandın! 🎉`,
     orderLoyal: "Sadakat indirimi", before: "Önce", after: "Sonra", imgSoon: "Görsel eklenecek",
@@ -124,6 +128,7 @@ const STR = {
     codeOk: (c, p) => `${c} applied: ${p}% off`, codeBad: "This discount code isn't valid.", codeEmpty: "Enter a discount code.",
     codeRemove: "Remove code", discPending: (p) => `${p}% (applied to price)`, promoBtn: (c) => `Code: ${c} — Apply`,
     promoApplied: (c) => `Code ${c} applied!`,
+    boosterOff: "Not available for this target rank", boosterReset: (n) => `${n} doesn't boost to this rank — switched to "Any booster".`,
     loyalHint: (n, p) => `Add <b>${n} more division${n > 1 ? "s" : ""}</b> to get <b>${p}% loyalty discount</b>!`,
     loyalMax: (p) => `You've unlocked the top loyalty discount (${p}%)! 🎉`,
     orderLoyal: "Loyalty discount", before: "Before", after: "After", imgSoon: "Image coming soon",
@@ -239,18 +244,38 @@ function renderDivs(el, side) {
       .join("");
 }
 
+/* Booster hedef ranka uygun mu? */
+const rankIdx = (key) => RANKS.findIndex((r) => r.key === key);
+function boosterOk(b, toLevel = state.to) {
+  if (b.any) return true;
+  const r = fromLevel(toLevel).r;
+  if (b.minTo && r < rankIdx(b.minTo)) return false;
+  if (b.maxTo && r > rankIdx(b.maxTo)) return false;
+  return true;
+}
+/* Seçili booster artık uygun değilse "Fark etmez"e dön */
+function fixBooster() {
+  const b = BOOSTERS[state.booster];
+  if (boosterOk(b)) return;
+  state.booster = BOOSTERS.findIndex((x) => x.any);
+  if (state.booster < 0) state.booster = 0;
+  toast(S().boosterReset(b.name));
+}
+
 function renderBoosters() {
   $("#boosters").innerHTML = BOOSTERS.map((b, i) => {
-    const initials = b.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+    const words = b.name.trim().split(/\s+/);
+    const initials = (words.length > 1 ? words.map((w) => w[0]).join("") : b.name).slice(0, 2).toUpperCase();
+    const ok = boosterOk(b);
     const avatar = b.any
       ? `<span class="booster__avatar booster__avatar--any"><svg><use href="#i-dice"/></svg></span>`
       : b.photo
         ? `<img class="booster__avatar" src="${b.photo}" alt="" width="52" height="52">`
         : `<span class="booster__avatar">${initials}</span>`;
     return `<button class="booster${state.booster === i ? " is-active" : ""}" role="radio"
-        aria-checked="${state.booster === i}" data-booster="${i}">
+        aria-checked="${state.booster === i}" data-booster="${i}" ${ok ? "" : `disabled title="${S().boosterOff}"`}>
         ${avatar}
-        <span class="booster__info"><strong>${L(b)}</strong><small>${L(b, "tag") || ""}</small></span>
+        <span class="booster__info"><strong>${L(b)}</strong><small>${ok ? L(b, "tag") || "" : `${L(b, "tag")} · ${S().boosterOff}`}</small></span>
         ${b.extra ? `<span class="booster__extra">+${pct(b.extra)}</span>` : ""}
         <span class="booster__check"><svg><use href="#i-check"/></svg></span>
       </button>`;
@@ -370,6 +395,7 @@ function initCalc() {
         state[side] = level(cur.r, +btn.dataset.div);
       }
       if (side === "from") fixTarget();
+      fixBooster();
       render();
     });
   bind("#fromRanks", "from");
@@ -377,7 +403,7 @@ function initCalc() {
   bind("#toRanks", "to");
   bind("#toDivs", "to");
   $("#boosters").addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-booster]");
+    const btn = e.target.closest("[data-booster]:not(:disabled)");
     if (!btn) return;
     state.booster = +btn.dataset.booster;
     render();
