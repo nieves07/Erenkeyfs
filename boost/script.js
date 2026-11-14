@@ -57,13 +57,14 @@ const BOOSTERS = [
     Birden fazla seçilirse yüzdeler toplanır.                               */
 const EXTRAS = [
   { name: "Duo Boost", desc: "Hesabını vermezsin, booster'la birlikte oynarsın. Daha düşük risk.",
-    desc_en: "Keep your account — play together with the booster. Lower risk.", percent: 100, tag: "Önerilen", tag_en: "Recommended" },
+    desc_en: "Keep your account — play together with the booster. Lower risk.", percent: 100 },
   { name: "Öncelikli Sipariş", name_en: "Priority Order", desc: "Siparişin sıranın en önüne alınır, daha hızlı biter.",
-    desc_en: "Your order jumps to the front of the queue and finishes faster.", percent: 25 },
-  { name: "Ajan Seçimi", name_en: "Agent Selection", desc: "Booster'ın hangi ajanlarla oynayacağını sen belirlersin.",
-    desc_en: "You choose which agents the booster plays.", percent: 15 },
+    desc_en: "Your order jumps to the front of the queue and finishes faster.", percent: 25,
+    tag: "Şu an en popüler", tag_en: "Most popular right now" },
   { name: "Canlı Yayın", name_en: "Live Stream", desc: "Maçları canlı yayından izleyebilirsin.",
     desc_en: "Watch your matches live on stream.", percent: 75 },
+  { name: "Ajan Seçimi", name_en: "Agent Selection", desc: "Booster'ın hangi ajanlarla oynayacağını sen belirlersin.",
+    desc_en: "You choose which agents the booster plays.", percent: 15 },
   { name: "Çevrimdışı Mod", name_en: "Offline Mode", desc: "Booster arkadaş listende çevrimdışı görünür.",
     desc_en: "The booster appears offline on your friends list.", percent: 0 },
 ];
