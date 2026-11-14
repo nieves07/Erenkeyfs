@@ -101,7 +101,7 @@ const I18N_EN = {
   "faq.4q": "How long does a boost take?",
   "faq.4a": "It depends on the number of divisions and booster availability. Our team will give you an estimate when you open a ticket.",
   "faq.5q": "Do I have to choose a booster?",
-  "faq.5a": 'No. If you pick "Any booster", your order goes to the first available booster for your target rank. SERKNOXX and ummut handle boosts up to Platinum, ClorNe handles Diamond and above; only boosters matching your target rank can be selected.',
+  "faq.5a": 'No. If you pick "Any booster", your order goes to the first available booster for your target rank. SERKNOXX and ummut handle everything up to Platinum, ClorNe handles the rest. For example, in a Silver to Immortal order, SERKNOXX or ummut play up to Platinum 3 and ClorNe plays from Platinum 3 onward; you can pick a booster for each part.',
   "faq.6q": "What is duo boost?",
   "faq.6a": "With duo boost you don't share your account with anyone; the booster plays on your team. Because of Valorant's rank disparity rules, the booster joins from an account that matches your rank. With no account sharing, the risk is lower — but not zero.",
   "faq.8q": "Are there discounts on big orders?",

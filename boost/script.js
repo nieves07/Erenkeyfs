@@ -64,6 +64,11 @@ const BOOSTERS = [
   { name: "ClorNe",   tag: "Elmas ve üstü", tag_en: "Diamond & above",  minTo: "elmas",  photo: null, extra: 0 },
 ];
 
+/*  SİPARİŞ BÖLME — bu rankın sonuna (3. kademe) kadar olan kısım ile sonrası
+    farklı booster'lara verilir. Örn. Gümüş 1 → Ölümsüzlük 1:
+    Gümüş 1 → Platin 3 = SERKNOXX/ummut, Platin 3 → Ölümsüzlük 1 = ClorNe.  */
+const SPLIT_AFTER = "platin";
+
 /*  EKSTRA SEÇENEKLER — percent: fiyata eklenecek yüzde (0 = ücretsiz)
     Birden fazla seçilirse yüzdeler toplanır.                               */
 const EXTRAS = [
@@ -113,7 +118,8 @@ const STR = {
     codeOk: (c, p) => `${c} uygulandı: %${p} indirim`, codeBad: "Bu indirim kodu geçerli değil.", codeEmpty: "Bir indirim kodu yaz.",
     codeRemove: "Kodu kaldır", discPending: (p) => `%${p} (fiyatla birlikte)`, promoBtn: (c) => `Kod: ${c} — Uygula`,
     promoApplied: (c) => `${c} kodu uygulandı!`,
-    boosterOff: "Bu hedef rank için uygun değil", boosterReset: (n) => `${n} bu hedef rankta boost yapmıyor, "Fark etmez" seçildi.`,
+    boosterOff: "Bu hedef rank için uygun değil",
+    splitNote: "Siparişin iki parçaya bölünür; her parçayı o rank aralığının booster'ı yapar.", boosterReset: (n) => `${n} bu hedef rankta boost yapmıyor, "Fark etmez" seçildi.`,
     loyalHint: (n, p) => `<b>${n} kademe daha</b> ekle, <b>%${p} sadakat indirimi</b> kazan!`,
     loyalMax: (p) => `En yüksek sadakat indirimini (%${p}) kazandın! 🎉`,
     orderLoyal: "Sadakat indirimi", before: "Önce", after: "Sonra", imgSoon: "Görsel eklenecek",
@@ -128,7 +134,8 @@ const STR = {
     codeOk: (c, p) => `${c} applied: ${p}% off`, codeBad: "This discount code isn't valid.", codeEmpty: "Enter a discount code.",
     codeRemove: "Remove code", discPending: (p) => `${p}% (applied to price)`, promoBtn: (c) => `Code: ${c} — Apply`,
     promoApplied: (c) => `Code ${c} applied!`,
-    boosterOff: "Not available for this target rank", boosterReset: (n) => `${n} doesn't boost to this rank — switched to "Any booster".`,
+    boosterOff: "Not available for this target rank",
+    splitNote: "Your order is split in two; each part is done by that rank range's booster.", boosterReset: (n) => `${n} doesn't boost to this rank — switched to "Any booster".`,
     loyalHint: (n, p) => `Add <b>${n} more division${n > 1 ? "s" : ""}</b> to get <b>${p}% loyalty discount</b>!`,
     loyalMax: (p) => `You've unlocked the top loyalty discount (${p}%)! 🎉`,
     orderLoyal: "Loyalty discount", before: "Before", after: "After", imgSoon: "Image coming soon",
@@ -168,7 +175,7 @@ const levelName = (lv) => {
   return RANKS[r].single ? rankName(RANKS[r]) : `${rankName(RANKS[r])} ${d}`;
 };
 
-const state = { from: level(2, 1), to: level(3, 1), booster: 0, extras: new Set(), code: null };
+const state = { from: level(2, 1), to: level(3, 1), boosters: [0, 0], extras: new Set(), code: null };
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -194,15 +201,19 @@ const nextLoyalty = () =>
   LOYALTY.filter((t) => t.percent > loyaltyPct()).sort((a, b) => a.min - b.min)[0] || null;
 
 function basePrice() {
+  let extrasPct = 0;
+  state.extras.forEach((i) => (extrasPct += EXTRAS[i].percent));
   let total = 0;
-  for (let lv = state.from; lv < state.to; lv++) {
-    const p = PRICES[RANKS[fromLevel(lv).r].key];
-    if (p == null) return null;
-    total += p;
+  for (const s of segments()) {
+    let segTotal = 0;
+    for (let lv = s.from; lv < s.to; lv++) {
+      const p = PRICES[RANKS[fromLevel(lv).r].key];
+      if (p == null) return null;
+      segTotal += p;
+    }
+    total += segTotal * (1 + ((segBooster(s).extra || 0) + extrasPct) / 100);
   }
-  let pct = BOOSTERS[state.booster].extra || 0;
-  state.extras.forEach((i) => (pct += EXTRAS[i].percent));
-  return total * (1 + pct / 100);
+  return total;
 }
 function calcPrice() {
   const b = basePrice();
@@ -253,33 +264,59 @@ function boosterOk(b, toLevel = state.to) {
   if (b.maxTo && r > rankIdx(b.maxTo)) return false;
   return true;
 }
+/* Sipariş parçaları: Platin'i aşan siparişler ikiye bölünür */
+function splitLevel() { return rankIdx(SPLIT_AFTER) * 3 + 2; }
+const isSplit = () => state.from < splitLevel() && state.to > splitLevel();
+function segments() {
+  if (!isSplit()) return [{ from: state.from, to: state.to, seg: 0 }];
+  return [
+    { from: state.from, to: splitLevel(), seg: 0 },
+    { from: splitLevel(), to: state.to, seg: 1 },
+  ];
+}
+const segBooster = (s) => BOOSTERS[state.boosters[s.seg]];
+const anyIdx = () => Math.max(0, BOOSTERS.findIndex((x) => x.any));
+const boosterText = () => segments().map((s) => L(segBooster(s))).join(" + ");
+
 /* Seçili booster artık uygun değilse "Fark etmez"e dön */
 function fixBooster() {
-  const b = BOOSTERS[state.booster];
-  if (boosterOk(b)) return;
-  state.booster = BOOSTERS.findIndex((x) => x.any);
-  if (state.booster < 0) state.booster = 0;
-  toast(S().boosterReset(b.name));
+  for (const s of segments()) {
+    const b = segBooster(s);
+    if (boosterOk(b, s.to)) continue;
+    state.boosters[s.seg] = anyIdx();
+    toast(S().boosterReset(b.name));
+  }
 }
 
 function renderBoosters() {
-  $("#boosters").innerHTML = BOOSTERS.map((b, i) => {
+  const split = isSplit();
+  const card = (b, i, seg, ok) => {
     const words = b.name.trim().split(/\s+/);
     const initials = (words.length > 1 ? words.map((w) => w[0]).join("") : b.name).slice(0, 2).toUpperCase();
-    const ok = boosterOk(b);
+    const active = state.boosters[seg] === i;
     const avatar = b.any
       ? `<span class="booster__avatar booster__avatar--any"><svg><use href="#i-dice"/></svg></span>`
       : b.photo
         ? `<img class="booster__avatar" src="${b.photo}" alt="" width="52" height="52">`
         : `<span class="booster__avatar">${initials}</span>`;
-    return `<button class="booster${state.booster === i ? " is-active" : ""}" role="radio"
-        aria-checked="${state.booster === i}" data-booster="${i}" ${ok ? "" : `disabled title="${S().boosterOff}"`}>
+    return `<button class="booster${active ? " is-active" : ""}" role="radio"
+        aria-checked="${active}" data-booster="${i}" data-seg="${seg}" ${ok ? "" : `disabled title="${S().boosterOff}"`}>
         ${avatar}
         <span class="booster__info"><strong>${L(b)}</strong><small>${ok ? L(b, "tag") || "" : `${L(b, "tag")} · ${S().boosterOff}`}</small></span>
         ${b.extra ? `<span class="booster__extra">+${pct(b.extra)}</span>` : ""}
         <span class="booster__check"><svg><use href="#i-check"/></svg></span>
       </button>`;
-  }).join("");
+  };
+  if (!split) {
+    $("#boosters").innerHTML = BOOSTERS.map((b, i) => card(b, i, 0, boosterOk(b, state.to))).join("");
+    return;
+  }
+  // Bölünmüş sipariş: her parça için sadece uygun booster'lar
+  $("#boosters").innerHTML =
+    `<p class="boosters__note">${S().splitNote}</p>` +
+    segments().map((s) => `
+      <p class="boosters__seg"><span>${s.seg + 1}</span>${levelName(s.from)} → ${levelName(s.to)}</p>
+      ${BOOSTERS.map((b, i) => (boosterOk(b, s.to) ? card(b, i, s.seg, true) : "")).join("")}`).join("");
 }
 
 function renderExtras() {
@@ -323,7 +360,7 @@ function renderSummary() {
   $("#sumFrom").innerHTML = `${icon(state.from, RANKS[f.r].color, 72)}<span>${levelName(state.from)}</span>`;
   $("#sumTo").innerHTML = `${icon(state.to, RANKS[t.r].color, 72)}<span>${levelName(state.to)}</span>`;
   $("#sumSteps").textContent = S().steps(state.to - state.from);
-  $("#sumBooster").textContent = L(BOOSTERS[state.booster]);
+  $("#sumBooster").textContent = boosterText();
   $("#sumExtras").textContent = extrasText();
 
   const base = basePrice();
@@ -405,7 +442,7 @@ function initCalc() {
   $("#boosters").addEventListener("click", (e) => {
     const btn = e.target.closest("[data-booster]:not(:disabled)");
     if (!btn) return;
-    state.booster = +btn.dataset.booster;
+    state.boosters[+btn.dataset.seg] = +btn.dataset.booster;
     render();
   });
   $("#extras").addEventListener("click", (e) => {
@@ -578,7 +615,8 @@ function orderText() {
   const lines = [
     S().orderTitle,
     `${S().orderRank}: ${levelName(state.from)} → ${levelName(state.to)} (${S().steps(state.to - state.from)})`,
-    `${S().booster}: ${L(BOOSTERS[state.booster])}`,
+    ...segments().map((s) =>
+      isSplit() ? `${S().booster} (${levelName(s.from)} → ${levelName(s.to)}): ${L(segBooster(s))}` : `${S().booster}: ${L(segBooster(s))}`),
     `${S().extras}: ${extrasText()}`,
   ];
   if (loyaltyPct()) lines.push(`${S().orderLoyal}: ${pct(loyaltyPct())}`);
@@ -589,7 +627,7 @@ function orderText() {
 
 function openModal() {
   $("#modalTitle").textContent = `${levelName(state.from)} → ${levelName(state.to)}`;
-  const parts = [`${S().booster}: ${L(BOOSTERS[state.booster])}`, `${S().extras}: ${extrasText()}`];
+  const parts = [`${S().booster}: ${boosterText()}`, `${S().extras}: ${extrasText()}`];
   if (state.code) parts.push(`${S().orderCode}: ${state.code}`);
   $("#modalDetail").textContent = parts.join(" · ");
   const p = calcPrice();
