@@ -1,0 +1,48 @@
+{
+  "kanal": "erenkeyfsss",
+  "chatroom_id": null,
+  "channel_id": null,
+  "duraklat_tusu": "f8",
+
+  "oduller": [
+    {
+      "odul": "Silahı At",
+      "oyun": "VALORANT",
+      "bekleme": 60,
+      "eylemler": [ { "tip": "bas", "tus": "g" } ]
+    },
+    {
+      "odul": "Bıçağa Geç",
+      "oyun": "VALORANT",
+      "bekleme": 60,
+      "eylemler": [ { "tip": "bas", "tus": "3" } ]
+    },
+    {
+      "odul": "Ters Direksiyon",
+      "oyun": "Grand Theft Auto V",
+      "bekleme": 90,
+      "eylemler": [ { "tip": "tus_degistir", "harita": { "a": "d", "d": "a" }, "sure": 20 } ]
+    },
+    {
+      "odul": "Sağa Kır",
+      "oyun": "Grand Theft Auto V",
+      "bekleme": 45,
+      "eylemler": [ { "tip": "basili_tut", "tus": "d", "sure": 3 } ]
+    },
+    {
+      "odul": "Zıpla Zıpla",
+      "oyun": "Grand Theft Auto V",
+      "bekleme": 30,
+      "eylemler": [ { "tip": "bas", "tus": "bosluk", "tekrar": 5, "ara": 0.6 } ]
+    },
+    {
+      "odul": "Arabadan İn",
+      "oyun": "Grand Theft Auto V",
+      "bekleme": 60,
+      "eylemler": [
+        { "tip": "basili_tut", "tus": "s", "sure": 1 },
+        { "tip": "bas", "tus": "f" }
+      ]
+    }
+  ]
+}
