@@ -69,6 +69,10 @@ const BOOSTERS = [
     Gümüş 1 → Platin 3 = SERKNOXX/ummut, Platin 3 → Ölümsüzlük 1 = ClorNe.  */
 const SPLIT_AFTER = "platin";
 
+/*  ELMAS+ FARKI — ClorNe'nin oynadığı kısma (Platin 3 sonrası) eklenen yüzde.
+    0 yaparsan ek ücret ve uyarılar kalkar.                                  */
+const HIGH_FEE = 25;
+
 /*  EKSTRA SEÇENEKLER — percent: fiyata eklenecek yüzde (0 = ücretsiz)
     Birden fazla seçilirse yüzdeler toplanır.                               */
 const EXTRAS = [
@@ -119,7 +123,9 @@ const STR = {
     codeRemove: "Kodu kaldır", discPending: (p) => `%${p} (fiyatla birlikte)`, promoBtn: (c) => `Kod: ${c} — Uygula`,
     promoApplied: (c) => `${c} kodu uygulandı!`,
     boosterOff: "Bu hedef rank için uygun değil",
-    splitNote: "Siparişin iki parçaya bölünür; her parçayı o rank aralığının booster'ı yapar.", boosterReset: (n) => `${n} bu hedef rankta boost yapmıyor, "Fark etmez" seçildi.`,
+    splitNote: "Siparişin iki parçaya bölünür; her parçayı o rank aralığının booster'ı yapar.",
+    highWarn: (p) => `<b>Dikkat: Elmas ve üstü boostlarda fiyat artar!</b> Platin 3'ten sonraki kısmı ClorNe oynar ve o kısmın fiyatına <b>+%${p}</b> eklenir.`,
+    highRow: "Elmas+ farkı", highShort: (p) => `Elmas+ kısmı +%${p}`, boosterReset: (n) => `${n} bu hedef rankta boost yapmıyor, "Fark etmez" seçildi.`,
     loyalHint: (n, p) => `<b>${n} kademe daha</b> ekle, <b>%${p} sadakat indirimi</b> kazan!`,
     loyalMax: (p) => `En yüksek sadakat indirimini (%${p}) kazandın! 🎉`,
     orderLoyal: "Sadakat indirimi", before: "Önce", after: "Sonra", imgSoon: "Görsel eklenecek",
@@ -135,7 +141,9 @@ const STR = {
     codeRemove: "Remove code", discPending: (p) => `${p}% (applied to price)`, promoBtn: (c) => `Code: ${c} — Apply`,
     promoApplied: (c) => `Code ${c} applied!`,
     boosterOff: "Not available for this target rank",
-    splitNote: "Your order is split in two; each part is done by that rank range's booster.", boosterReset: (n) => `${n} doesn't boost to this rank — switched to "Any booster".`,
+    splitNote: "Your order is split in two; each part is done by that rank range's booster.",
+    highWarn: (p) => `<b>Heads up: Diamond and above boosts cost more!</b> ClorNe plays everything after Platinum 3, and that part costs <b>+${p}%</b>.`,
+    highRow: "Diamond+ fee", highShort: (p) => `Diamond+ part +${p}%`, boosterReset: (n) => `${n} doesn't boost to this rank — switched to "Any booster".`,
     loyalHint: (n, p) => `Add <b>${n} more division${n > 1 ? "s" : ""}</b> to get <b>${p}% loyalty discount</b>!`,
     loyalMax: (p) => `You've unlocked the top loyalty discount (${p}%)! 🎉`,
     orderLoyal: "Loyalty discount", before: "Before", after: "After", imgSoon: "Image coming soon",
@@ -200,7 +208,11 @@ const loyaltyPct = () =>
 const nextLoyalty = () =>
   LOYALTY.filter((t) => t.percent > loyaltyPct()).sort((a, b) => a.min - b.min)[0] || null;
 
-function basePrice() {
+/* Platin 3 sonrası kısım mı? */
+const isHighSeg = (s) => s.from >= splitLevel();
+const hasHigh = () => HIGH_FEE > 0 && state.to > splitLevel();
+
+function basePrice(withHighFee = true) {
   let extrasPct = 0;
   state.extras.forEach((i) => (extrasPct += EXTRAS[i].percent));
   let total = 0;
@@ -211,7 +223,8 @@ function basePrice() {
       if (p == null) return null;
       segTotal += p;
     }
-    total += segTotal * (1 + ((segBooster(s).extra || 0) + extrasPct) / 100);
+    const fee = withHighFee && isHighSeg(s) ? HIGH_FEE : 0;
+    total += segTotal * (1 + ((segBooster(s).extra || 0) + extrasPct + fee) / 100);
   }
   return total;
 }
@@ -302,18 +315,20 @@ function renderBoosters() {
     return `<button class="booster${active ? " is-active" : ""}" role="radio"
         aria-checked="${active}" data-booster="${i}" data-seg="${seg}" ${ok ? "" : `disabled title="${S().boosterOff}"`}>
         ${avatar}
-        <span class="booster__info"><strong>${L(b)}</strong><small>${ok ? L(b, "tag") || "" : `${L(b, "tag")} · ${S().boosterOff}`}</small></span>
+        <span class="booster__info"><strong>${L(b)}${b.minTo && HIGH_FEE ? ` <em class="booster__high">+${pct(HIGH_FEE)}</em>` : ""}</strong><small>${ok ? L(b, "tag") || "" : `${L(b, "tag")} · ${S().boosterOff}`}</small></span>
         ${b.extra ? `<span class="booster__extra">+${pct(b.extra)}</span>` : ""}
         <span class="booster__check"><svg><use href="#i-check"/></svg></span>
       </button>`;
   };
+  const warn = hasHigh()
+    ? `<div class="high-warn"><svg><use href="#i-alert"/></svg><p>${S().highWarn(HIGH_FEE)}</p></div>` : "";
   if (!split) {
-    $("#boosters").innerHTML = BOOSTERS.map((b, i) => card(b, i, 0, boosterOk(b, state.to))).join("");
+    $("#boosters").innerHTML = warn + BOOSTERS.map((b, i) => card(b, i, 0, boosterOk(b, state.to))).join("");
     return;
   }
   // Bölünmüş sipariş: her parça için sadece uygun booster'lar
   $("#boosters").innerHTML =
-    `<p class="boosters__note">${S().splitNote}</p>` +
+    warn + `<p class="boosters__note">${S().splitNote}</p>` +
     segments().map((s) => `
       <p class="boosters__seg"><span>${s.seg + 1}</span>${levelName(s.from)} → ${levelName(s.to)}</p>
       ${BOOSTERS.map((b, i) => (boosterOk(b, s.to) ? card(b, i, s.seg, true) : "")).join("")}`).join("");
@@ -366,6 +381,13 @@ function renderSummary() {
   const base = basePrice();
   const p = calcPrice();
   const d = discountPct();
+
+  // Elmas+ farkı
+  $("#sumHighRow").hidden = !hasHigh();
+  if (hasHigh()) {
+    const noFee = basePrice(false);
+    $("#sumHigh").textContent = base == null ? S().highShort(HIGH_FEE) : `+${money(base - noFee)} (${pct(HIGH_FEE)})`;
+  }
 
   // Sadakat indirimi
   const lp = loyaltyPct();
@@ -619,6 +641,7 @@ function orderText() {
       isSplit() ? `${S().booster} (${levelName(s.from)} → ${levelName(s.to)}): ${L(segBooster(s))}` : `${S().booster}: ${L(segBooster(s))}`),
     `${S().extras}: ${extrasText()}`,
   ];
+  if (hasHigh()) lines.push(`${S().highRow}: +${pct(HIGH_FEE)}`);
   if (loyaltyPct()) lines.push(`${S().orderLoyal}: ${pct(loyaltyPct())}`);
   if (state.code) lines.push(`${S().orderCode}: ${state.code} (${pct(CODES[state.code])})`);
   lines.push(`${S().orderPrice}: ${p == null ? S().tbdShort : money(p)}`);

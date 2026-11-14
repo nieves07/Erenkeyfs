@@ -40,6 +40,8 @@ toplam yerine "Discord'da belirlenir" yazar.
   `minTo: "elmas"`). Aralık dışındaki hedeflerde booster soluk görünür, seçilemez.
 - `SPLIT_AFTER = "platin"`: Platin'i aşan siparişler ikiye bölünür (Platin 3'e kadar /
   sonrası) ve müşteri her parça için booster'ını ayrı seçer.
+- `HIGH_FEE = 25`: Platin 3 sonrası (ClorNe) kısmına eklenen yüzde; sitede belirgin uyarıyla
+  gösterilir. `0` yaparsan kalkar.
 - İlk satırdaki "Fark etmez" seçeneğini silme
 
 **Ekstra seçenekler** — `percent` fiyata eklenecek yüzde (0 = ücretsiz):

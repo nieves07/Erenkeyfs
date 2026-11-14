@@ -556,3 +556,23 @@ svg { width: 1em; height: 1em; flex-shrink: 0; }
 .boosters__note { grid-column: 1 / -1; margin: 0; padding: 10px 12px; border-radius: 10px; font-size: 13px; color: var(--violet-3); background: rgba(139,92,246,.08); border: 1px dashed var(--line-strong); }
 .boosters__seg { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin: 8px 0 0; font: 600 14px var(--display); text-transform: uppercase; letter-spacing: .05em; color: var(--text); }
 .boosters__seg span { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; font-size: 12px; background: rgba(139,92,246,.25); color: var(--violet-3); }
+
+/* Elmas+ fiyat uyarısı */
+.high-warn {
+  grid-column: 1 / -1; display: flex; gap: 12px; align-items: flex-start;
+  padding: 14px 16px; border-radius: 12px; margin-bottom: 4px;
+  background: linear-gradient(135deg, rgba(251,191,36,.16), rgba(251,113,36,.08));
+  border: 1.5px solid rgba(251,191,36,.6); color: #fde68a; font-size: 14px;
+  box-shadow: 0 0 24px -10px rgba(251,191,36,.6);
+}
+.high-warn svg { font-size: 22px; color: var(--warn); flex-shrink: 0; margin-top: 1px; }
+.high-warn b { color: #fff3c4; }
+.booster__extra--high {
+  padding: 2px 8px; border-radius: 99px; background: rgba(251,191,36,.15);
+  border: 1px solid rgba(251,191,36,.5); color: var(--warn);
+}
+.summary__high dd { color: var(--warn); font-weight: 700; }
+.booster__high {
+  font: 700 11px var(--display); font-style: normal; margin-left: 6px; padding: 2px 7px; border-radius: 99px;
+  background: rgba(251,191,36,.15); border: 1px solid rgba(251,191,36,.5); color: var(--warn); vertical-align: middle;
+}
